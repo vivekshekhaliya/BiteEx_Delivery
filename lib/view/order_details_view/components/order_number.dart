@@ -2,19 +2,30 @@ import 'package:flutter/material.dart';
 
 import '../../../res/components/custom_text.dart';
 import '../../../res/constants/app_colors.dart';
+import '../../../model/order_details_model.dart';
 
-class OrderNumber extends StatefulWidget {
-  const OrderNumber({super.key});
+class OrderNumber extends StatelessWidget {
+  final OrderDetailsData? order;
+  const OrderNumber({super.key, this.order});
 
-  @override
-  State<OrderNumber> createState() => _OrderNumberState();
-}
+  Color _getStatusColor(String? status) {
+    if (status == null) return AppColors.orangeColor;
+    final lower = status.toLowerCase();
+    if (lower == 'delivered' || lower == 'completed') {
+      return AppColors.mintGreenColor;
+    } else if (lower == 'on the way' || lower == 'on_the_way') {
+      return AppColors.primaryColor;
+    }
+    return AppColors.orangeColor;
+  }
 
-class _OrderNumberState extends State<OrderNumber> {
   @override
   Widget build(BuildContext context) {
+    final statusText = order?.status ?? 'In Process';
+    final statusColor = _getStatusColor(order?.status);
+
     return Container(
-      padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColors.darkGunmetalColor,
@@ -27,14 +38,14 @@ class _OrderNumberState extends State<OrderNumber> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                data: '#Order-17',
+                data: order?.orderNumber ?? '#ORDER-17',
                 fontSize: 16,
                 color: AppColors.whiteColor,
                 fontWeight: FontWeight.w600,
               ),
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               CustomText(
-                data: 'Completed at 07 Feb, 9:25 PM',
+                data: order?.date ?? '',
                 fontSize: 13,
                 color: AppColors.lightBlueGrayColor,
                 fontWeight: FontWeight.w400,
@@ -42,15 +53,15 @@ class _OrderNumberState extends State<OrderNumber> {
             ],
           ),
           Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.orangeColor.withAlpha(40),
-              borderRadius: BorderRadius.circular(4),
+              color: statusColor.withAlpha(40),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: CustomText(
-              data: 'In Process',
-              fontSize: 10,
-              color: AppColors.orangeColor,
+              data: statusText,
+              fontSize: 12,
+              color: statusColor,
               fontWeight: FontWeight.w600,
             ),
           ),

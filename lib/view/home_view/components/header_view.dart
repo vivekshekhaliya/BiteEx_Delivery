@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../../res/components/custom_text.dart';
-import '../../../res/constants/app_colors.dart';
+import 'package:provider/provider.dart';
+import '../../../../res/components/custom_text.dart';
+import '../../../../res/constants/app_colors.dart';
+import '../../../../view_model/rider_view_model.dart';
 
 class HeaderView extends StatefulWidget {
   const HeaderView({super.key});
@@ -15,6 +17,9 @@ class _HeaderViewState extends State<HeaderView> {
   @override
   Widget build(BuildContext context) {
     final insets = MediaQuery.of(context).padding;
+    final riderVM = Provider.of<RiderViewModel>(context);
+    final riderName = riderVM.dashboardData?.data?.riderName ?? "Rider";
+    
     return Container(
       margin: EdgeInsets.only(
         left: 16,
@@ -54,7 +59,7 @@ class _HeaderViewState extends State<HeaderView> {
                 fontWeight: FontWeight.w400,
               ),
               CustomText(
-                data: "Rahul 👋",
+                data: "$riderName 👋",
                 color: AppColors.whiteColor,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -63,6 +68,56 @@ class _HeaderViewState extends State<HeaderView> {
           ),
 
           const Spacer(),
+
+          // Rider Online / Offline ON-OFF Toggle Switch
+          GestureDetector(
+            onTap: () async {
+              final newStatus = !riderVM.isOnline;
+              await riderVM.updateRiderStatusApi(context, newStatus);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: riderVM.isOnline
+                    ? AppColors.primaryColor.withAlpha(40)
+                    : AppColors.crimsonRedColor.withAlpha(40),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: riderVM.isOnline
+                      ? AppColors.primaryColor
+                      : AppColors.crimsonRedColor,
+                  width: 1.2,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: riderVM.isOnline
+                          ? AppColors.primaryColor
+                          : AppColors.crimsonRedColor,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  CustomText(
+                    data: riderVM.isOnline ? 'ON' : 'OFF',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: riderVM.isOnline
+                        ? AppColors.primaryColor
+                        : AppColors.crimsonRedColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
 
           IconButton(
             padding: EdgeInsets.zero,

@@ -110,9 +110,8 @@ class WebSocketManager {
     if (event == 'pusher:connection_established') {
       debugPrint("🎉 Pusher Connected");
 
-      /// 👉 Auto subscribe here (BEST PRACTICE)
-      subscribe("price-channel");
-      subscribe("market-crash-channel");
+      /// 👉 Auto subscribe here
+      subscribe("delivery-orders");
     }
 
     /// ✅ Subscription success
@@ -121,40 +120,20 @@ class WebSocketManager {
       debugPrint("✅ Subscribed: $channel");
     }
 
-    /// ✅ Market crash event
-    if (event == 'market.crash' || event == '.market.crash') {
+    /// ✅ Delivery Orders event on delivery-orders channel
+    final channelName = data['channel'];
+    if (channelName == 'delivery-orders' ||
+        event == 'delivery-orders' ||
+        event == 'order.created' ||
+        event == 'order.updated') {
       try {
         final rawData = data['data'];
         final parsedData = rawData is String ? jsonDecode(rawData) : rawData;
-
-        _controller.add({"type": "market_crashed", "data": parsedData});
+        debugPrint("📦 Delivery Orders Event Received: $event");
+        _controller.add({"type": "delivery_orders_updated", "channel": "delivery-orders", "data": parsedData});
       } catch (e) {
-        debugPrint("❌ Error parsing $event: $e");
-        _controller.add({"type": "market_crashed"});
-      }
-    }
-
-    /// ✅ Custom Event: price.updated
-    if (event == 'price.updated') {
-      try {
-        final rawData = data['data'];
-
-        /// ⚠️ IMPORTANT: data is string → decode again
-        final parsedData = rawData is String ? jsonDecode(rawData) : rawData;
-
-        final price = parsedData['price'];
-
-        debugPrint("💰 Price Update Received: $price");
-
-        /// 👉 Send clean event to UI
-        _controller.add({
-          "type": "price_updated",
-          "product_id": price['product_id'],
-          "new_price": price['new_price'],
-          "menu_price": price['menu_price'],
-        });
-      } catch (e) {
-        debugPrint("❌ Error parsing price.updated: $e");
+        debugPrint("❌ Error parsing delivery-orders event: $e");
+        _controller.add({"type": "delivery_orders_updated", "channel": "delivery-orders"});
       }
     }
 

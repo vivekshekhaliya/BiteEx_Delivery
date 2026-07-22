@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "483652263189",
+    "project_id": "biteex-a3fa6",
+    "storage_bucket": "biteex-a3fa6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483652263189:android:64fc1f2cb3d895d2c85d1c",
+        "android_client_info": {
+          "package_name": "com.bite_ex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTZIcSrw3x2tZcJ86jL3CrGjp0BNLr3tI"
+        },
+        {
+          "current_key": "AIzaSyD0B2At8aqOq9FCBEbRBSdUsBRj4OlZDRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483652263189:android:1b79219d77361541c85d1c",
+        "android_client_info": {
+          "package_name": "com.bite_ex_delivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTZIcSrw3x2tZcJ86jL3CrGjp0BNLr3tI"
+        },
+        {
+          "current_key": "AIzaSyD0B2At8aqOq9FCBEbRBSdUsBRj4OlZDRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,12 +1,13 @@
 import 'dart:async';
-import 'package:bite_ex_delivery/res/routes/routes_name.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 import '../../../res/components/custom_text.dart';
 import '../../res/components/app_custom_flip_text.dart';
 import '../../res/components/custom_app_bar.dart';
 import '../../res/components/custom_app_button.dart';
 import '../../res/constants/app_colors.dart';
+import '../../view_model/auth_view_model.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String mobile;
@@ -123,13 +124,24 @@ class _VerificationScreenState extends State<VerificationScreen> {
             const SizedBox(height: 40),
 
             /// Verify Button
-            CustomAppButton(
-              text: "Verify",
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  RoutesName.bottomNavigationBarScreen,
-                  (route) => false,
+            Consumer<AuthViewModel>(
+              builder: (context, authViewModel, child) {
+                return CustomAppButton(
+                  text: "Verify",
+                  isLoading: authViewModel.verifyLoading,
+                  onPressed: () {
+                    if (enteredOtp.length == 6) {
+                      authViewModel.verifyApi(
+                        widget.mobile,
+                        enteredOtp,
+                        context,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please enter complete 6-digit OTP')),
+                      );
+                    }
+                  },
                 );
               },
             ),
@@ -137,28 +149,60 @@ class _VerificationScreenState extends State<VerificationScreen> {
             const SizedBox(height: 40),
 
             /// Resend Timer
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomText(
-                  data: 'Resend code in ',
-                  color: AppColors.coolGrayColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-                if (_secondsRemaining == 0)
-                  CustomText()
-                else
-                  AppCustomFlipText(
-                    value: num.parse(
-                      _secondsRemaining.toString().padLeft(2, '0'),
-                    ),
-                    prefix: '00:',
-                    color: AppColors.primaryColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-              ],
+            Consumer<AuthViewModel>(
+              builder: (context, authViewModel, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (_secondsRemaining == 0)
+                      authViewModel.resendLoading
+                          ? const SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                              ),
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                authViewModel.resendApi(
+                                  widget.mobile,
+                                  context,
+                                ).then((_) {
+                                  setState(() {
+                                    _secondsRemaining = 59;
+                                  });
+                                  _startTimer();
+                                });
+                              },
+                              child: CustomText(
+                                data: 'Resend OTP',
+                                color: AppColors.primaryColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )
+                    else ...[
+                      CustomText(
+                        data: 'Resend code in ',
+                        color: AppColors.coolGrayColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      AppCustomFlipText(
+                        value: num.parse(
+                          _secondsRemaining.toString().padLeft(2, '0'),
+                        ),
+                        prefix: '00:',
+                        color: AppColors.primaryColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
           ],
         ),

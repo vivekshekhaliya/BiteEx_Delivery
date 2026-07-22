@@ -58,7 +58,7 @@ class ApiClient {
                 break;
 
               case DioExceptionType.badResponse:
-                if (error.response?.statusCode == 401) {
+                if (error.response?.statusCode == 401 || error.response?.statusCode == 403) {
                   await SharedPrefService.clearPref('token');
                   await SharedPrefService.clearPref('user');
 

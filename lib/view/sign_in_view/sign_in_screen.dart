@@ -1,10 +1,11 @@
-import 'package:bite_ex_delivery/view/verification_view/verification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import '../../res/components/custom_app_button.dart';
 import '../../res/components/custom_app_text_input.dart';
 import '../../res/components/custom_text.dart';
 import '../../res/constants/app_colors.dart';
+import '../../view_model/auth_view_model.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -91,15 +92,19 @@ class _SignInScreenState extends State<SignInScreen> {
                 },
               ),
               SizedBox(height: 40),
-              CustomAppButton(
-                text: 'Send OTP',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          VerificationScreen(mobile: '1234567890'),
-                    ),
+              Consumer<AuthViewModel>(
+                builder: (context, authViewModel, child) {
+                  return CustomAppButton(
+                    text: 'Send OTP',
+                    isLoading: authViewModel.loginLoading,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        authViewModel.signInApi(
+                          cleanNumber(mobileController.text),
+                          context,
+                        );
+                      }
+                    },
                   );
                 },
               ),

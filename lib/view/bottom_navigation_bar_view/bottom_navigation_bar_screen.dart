@@ -8,6 +8,8 @@ import 'package:new_version_plus/new_version_plus.dart';
 import '../../res/components/custom_text.dart';
 import '../../res/constants/app_colors.dart';
 import '../../services/web_socket_manager.dart';
+import '../../view_model/rider_view_model.dart';
+import 'package:provider/provider.dart';
 import '../delivery_view/delivery_screen.dart';
 import '../home_view/home_screen.dart';
 import '../profile_view/profile_screen.dart';
@@ -24,7 +26,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   // final NotificationService _notificationService = NotificationService();
   int _selectedIndex = 0;
   StreamSubscription? _socketSubscription;
-  final bool _isCrashDialogShowing = false;
 
   final List<Map<String, String>> _items = [
     {"icon": "assets/svg_icon/home_tab_bar_icon.svg", "label": "Home"},
@@ -58,7 +59,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   @override
   void initState() {
     super.initState();
-    _listenForMarketCrash();
+    _listenToWebSocketEvents();
     // _notificationService.initialize();
     // _notificationService.onNotificationTap.stream.listen((data) {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -72,12 +73,16 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     super.dispose();
   }
 
-  /// Listen to WebSocket stream for market_crashed events
-  void _listenForMarketCrash() {
+  /// Listen to WebSocket stream for delivery_orders_updated events
+  void _listenToWebSocketEvents() {
     _socketSubscription = WebSocketManager().stream.listen((data) {
-      if (data is Map && data['type'] == 'market_crashed') {
-        if (!_isCrashDialogShowing && mounted) {
-          _marketCrashDialog();
+      if (data is Map) {
+        if (data['type'] == 'delivery_orders_updated' || data['channel'] == 'delivery-orders') {
+          if (mounted) {
+            final riderVM = Provider.of<RiderViewModel>(context, listen: false);
+            riderVM.getAvailableOrdersApi(context);
+            riderVM.getRiderDashboardApi(context);
+          }
         }
       }
     });
@@ -172,6 +177,4 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       ),
     );
   }
-
-  void _marketCrashDialog() {}
 }

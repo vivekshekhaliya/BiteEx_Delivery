@@ -2,25 +2,21 @@ import 'package:bite_ex_delivery/res/components/app_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../model/order_details_model.dart';
 import '../../../res/components/custom_text.dart';
 import '../../../res/constants/app_colors.dart';
 
-class UserContact extends StatefulWidget {
-  const UserContact({super.key});
+class UserContact extends StatelessWidget {
+  final Customer? customer;
+  const UserContact({super.key, this.customer});
 
-  @override
-  State<UserContact> createState() => _UserContactState();
-}
-
-class _UserContactState extends State<UserContact> {
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         AppCachedNetworkImage(
-          imageUrl:
-              'https://testingbot.com/free-online-tools/random-avatar/200',
+          imageUrl: customer?.image ?? 'https://testingbot.com/free-online-tools/random-avatar/200',
           height: 48,
           width: 48,
           borderRadius: BorderRadius.circular(100),
@@ -30,14 +26,14 @@ class _UserContactState extends State<UserContact> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomText(
-              data: 'Jack white',
+              data: customer?.name ?? 'Jack white',
               fontSize: 16,
               color: AppColors.whiteColor,
               fontWeight: FontWeight.w600,
             ),
             SizedBox(height: 6),
             CustomText(
-              data: '9999-999-99',
+              data: customer?.mobile ?? '9999-999-99',
               fontSize: 13,
               color: AppColors.lightBlueGrayColor,
               fontWeight: FontWeight.w400,

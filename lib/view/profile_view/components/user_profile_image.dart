@@ -2,10 +2,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../../res/components/app_cached_network_image.dart';
 import '../../../res/components/custom_text.dart';
 import '../../../res/constants/app_colors.dart';
+import '../../../services/shared_pref_service.dart';
+import '../../../view_model/user_view_model.dart';
 
 class UserProfileImage extends StatefulWidget {
   const UserProfileImage({super.key});
@@ -22,6 +25,27 @@ class _UserProfileImageState extends State<UserProfileImage> {
   late String mobile = '';
   late String image = '';
 
+  @override
+  void initState() {
+    super.initState();
+    _getUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+      userViewModel.getUserApi(context);
+    });
+  }
+
+  Future<void> _getUserData() async {
+    final userData = await SharedPrefService.getPref('user');
+    if (userData != null && mounted) {
+      setState(() {
+        name = userData['name']?.toString() ?? '';
+        mobile = userData['mobile']?.toString() ?? '';
+        image = userData['image']?.toString() ?? '';
+      });
+    }
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(
       source: source,
@@ -31,10 +55,13 @@ class _UserProfileImageState extends State<UserProfileImage> {
     );
 
     if (pickedFile != null) {
+      if (!mounted) return;
       Navigator.pop(context);
       setState(() {
         _image = File(pickedFile.path);
       });
+      final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+      await userViewModel.editProfileApi(context, imagePath: pickedFile.path);
     }
   }
 
@@ -155,77 +182,88 @@ class _UserProfileImageState extends State<UserProfileImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.bottomRight,
+    return Consumer<UserViewModel>(
+      builder: (context, userViewModel, child) {
+        final user = userViewModel.user;
+        final displayName = user?.name ?? (name.isNotEmpty ? name : 'Your Account');
+        final displayMobile = user?.mobile ?? (mobile.isNotEmpty ? mobile : '');
+        final displayImage = user?.image ?? image;
+
+        return Center(
+          child: Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: _image != null
-                    ? Image.file(
-                        _image!,
-                        height: 94,
-                        width: 94,
-                        fit: BoxFit.cover,
-                      )
-                    : image.isNotEmpty
-                    ? AppCachedNetworkImage(
-                        imageUrl: image,
-                        height: 94,
-                        width: 94,
-                        fit: BoxFit.cover,
-                      )
-                    : AppCachedNetworkImage(
-                        imageUrl:
-                            'https://untitledui.com/images/avatars/olly-schroeder',
-                        height: 94,
-                        width: 94,
-                        fit: BoxFit.cover,
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: _image != null
+                        ? Image.file(
+                            _image!,
+                            height: 94,
+                            width: 94,
+                            fit: BoxFit.cover,
+                          )
+                        : displayImage.isNotEmpty
+                        ? AppCachedNetworkImage(
+                            imageUrl: displayImage,
+                            height: 94,
+                            width: 94,
+                            fit: BoxFit.cover,
+                          )
+                        : AppCachedNetworkImage(
+                            imageUrl:
+                                'https://untitledui.com/images/avatars/olly-schroeder',
+                            height: 94,
+                            width: 94,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+
+                  InkWell(
+                    onTap: _showImageSourceSheet,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: AppColors.midnightBlueColor,
+                        border: Border.all(
+                          color: AppColors.whiteColor.withAlpha(60),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(30),
                       ),
+                      child: Icon(
+                        CupertinoIcons.camera,
+                        size: 14,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
-              InkWell(
-                onTap: _showImageSourceSheet,
-                borderRadius: BorderRadius.circular(100),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: AppColors.midnightBlueColor,
-                    border: Border.all(
-                      color: AppColors.whiteColor.withAlpha(60),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Icon(
-                    CupertinoIcons.camera,
-                    size: 14,
-                    color: AppColors.whiteColor,
-                  ),
-                ),
+              SizedBox(height: 16),
+              CustomText(
+                data: displayName,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.whiteColor,
               ),
+              if (displayMobile.isNotEmpty) ...[
+                SizedBox(height: 6),
+                CustomText(
+                  data: displayMobile,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.lightBlueGrayColor,
+                ),
+              ],
             ],
           ),
-
-          SizedBox(height: 16),
-          CustomText(
-            data: 'Your Account',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.whiteColor,
-          ),
-          SizedBox(height: 6),
-          CustomText(
-            data: '+91 9876501234',
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: AppColors.lightBlueGrayColor,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

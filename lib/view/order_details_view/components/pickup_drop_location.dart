@@ -2,17 +2,15 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../model/order_details_model.dart';
 import '../../../res/components/custom_text.dart';
 import '../../../res/constants/app_colors.dart';
 
-class PickupDropLocation extends StatefulWidget {
-  const PickupDropLocation({super.key});
+class PickupDropLocation extends StatelessWidget {
+  final Pickup? pickup;
+  final Drop? drop;
+  const PickupDropLocation({super.key, this.pickup, this.drop});
 
-  @override
-  State<PickupDropLocation> createState() => _PickupDropLocationState();
-}
-
-class _PickupDropLocationState extends State<PickupDropLocation> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,7 +53,9 @@ class _PickupDropLocationState extends State<PickupDropLocation> {
                       color: AppColors.whiteColor,
                     ),
                     CustomText(
-                      data: "BiteEx Restaurant",
+                      data: (pickup?.location != null && pickup!.location!.isNotEmpty)
+                          ? "${pickup?.name ?? 'Pickup'} - ${pickup!.location}"
+                          : (pickup?.name ?? "BiteEx Outlet"),
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: AppColors.whiteColor,
@@ -108,7 +108,7 @@ class _PickupDropLocationState extends State<PickupDropLocation> {
                       color: AppColors.whiteColor,
                     ),
                     CustomText(
-                      data: "Ahmedabad University",
+                      data: drop?.address ?? "Ahmedabad University",
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: AppColors.whiteColor,

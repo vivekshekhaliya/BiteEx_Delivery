@@ -5,22 +5,36 @@ import '../../../res/components/custom_text.dart';
 import '../../../res/constants/app_colors.dart';
 
 class CompleteVerification extends StatefulWidget {
-  const CompleteVerification({super.key});
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onCompleted;
+
+  const CompleteVerification({
+    super.key,
+    this.controller,
+    this.onChanged,
+    this.onCompleted,
+  });
 
   @override
   State<CompleteVerification> createState() => _CompleteVerificationState();
 }
 
 class _CompleteVerificationState extends State<CompleteVerification> {
-  String enteredOtp = "";
-  final TextEditingController _otpController = TextEditingController();
+  late TextEditingController _otpController;
+
+  @override
+  void initState() {
+    super.initState();
+    _otpController = widget.controller ?? TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: AppColors.darkGunmetalColor,
@@ -30,7 +44,7 @@ class _CompleteVerificationState extends State<CompleteVerification> {
         spacing: 16,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(
+          const CustomText(
             data: 'Enter OTP',
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -52,7 +66,7 @@ class _CompleteVerificationState extends State<CompleteVerification> {
             defaultPinTheme: PinTheme(
               height: 56,
               width: size.width / 5.6,
-              textStyle: TextStyle(fontSize: 22, color: AppColors.whiteColor),
+              textStyle: const TextStyle(fontSize: 22, color: AppColors.whiteColor),
               decoration: BoxDecoration(
                 color: AppColors.secondaryColor,
                 borderRadius: BorderRadius.circular(16),
@@ -62,7 +76,7 @@ class _CompleteVerificationState extends State<CompleteVerification> {
             focusedPinTheme: PinTheme(
               height: 56,
               width: size.width / 5.6,
-              textStyle: TextStyle(fontSize: 22, color: AppColors.whiteColor),
+              textStyle: const TextStyle(fontSize: 22, color: AppColors.whiteColor),
               decoration: BoxDecoration(
                 color: AppColors.secondaryColor,
                 borderRadius: BorderRadius.circular(16),
@@ -70,14 +84,12 @@ class _CompleteVerificationState extends State<CompleteVerification> {
               ),
             ),
 
-            /// 🔥 IMPORTANT
             onChanged: (value) {
-              enteredOtp = value;
+              if (widget.onChanged != null) widget.onChanged!(value);
             },
 
-            /// 🔥 AUTO SUBMIT (optional but recommended)
             onCompleted: (value) {
-              enteredOtp = value;
+              if (widget.onCompleted != null) widget.onCompleted!(value);
             },
           ),
         ],

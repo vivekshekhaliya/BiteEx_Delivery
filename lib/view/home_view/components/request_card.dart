@@ -5,9 +5,15 @@ import 'package:bite_ex_delivery/view/order_details_view/order_details_screen.da
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:bite_ex_delivery/model/available_order_model.dart';
+import 'package:bite_ex_delivery/view_model/rider_view_model.dart';
 
 class RequestCard extends StatefulWidget {
-  const RequestCard({super.key});
+  final AvailableOrder? order;
+
+  const RequestCard({super.key, this.order});
 
   @override
   State<RequestCard> createState() => _RequestCardState();
@@ -28,7 +34,10 @@ class _RequestCardState extends State<RequestCard> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => OrderDetailsScreen()),
+            MaterialPageRoute(
+              builder: (context) =>
+                  OrderDetailsScreen(orderId: widget.order?.orderId ?? 1),
+            ),
           );
         },
         child: Column(
@@ -75,7 +84,9 @@ class _RequestCardState extends State<RequestCard> {
                               color: AppColors.whiteColor,
                             ),
                             CustomText(
-                              data: "BiteEx Restaurant",
+                              data:
+                                  widget.order?.pickupName ??
+                                  "BiteEx Restaurant",
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: AppColors.whiteColor,
@@ -128,7 +139,9 @@ class _RequestCardState extends State<RequestCard> {
                               color: AppColors.whiteColor,
                             ),
                             CustomText(
-                              data: "Ahmedabad University",
+                              data:
+                                  widget.order?.dropLocation ??
+                                  "Ahmedabad University",
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: AppColors.whiteColor,
@@ -153,7 +166,9 @@ class _RequestCardState extends State<RequestCard> {
             Row(
               children: [
                 CustomText(
-                  data: '₹25.00',
+                  data: widget.order != null
+                      ? '₹${widget.order!.deliveryEarnings}'
+                      : '₹25.00',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: AppColors.lightBlueGrayColor,
@@ -168,7 +183,7 @@ class _RequestCardState extends State<RequestCard> {
                 ),
                 SizedBox(width: 10),
                 CustomText(
-                  data: '07 Feb, 9:10 PM',
+                  data: widget.order?.date ?? '07 Feb, 9:10 PM',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: AppColors.lightBlueGrayColor,
@@ -182,7 +197,7 @@ class _RequestCardState extends State<RequestCard> {
                     color: AppColors.orangeColor.withAlpha(40),
                   ),
                   child: CustomText(
-                    data: 'In Process',
+                    data: widget.order?.status ?? 'In Process',
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.orangeColor,
@@ -191,90 +206,146 @@ class _RequestCardState extends State<RequestCard> {
               ],
             ),
             CustomText(
-              data: '#ORDER-17',
+              data: widget.order?.orderNumber ?? '#ORDER-17',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.lightBlueGrayColor,
               padding: EdgeInsets.only(left: 12, top: 4),
             ),
-            SizedBox(
-              height: 70,
-              child: ListView.builder(
-                itemCount: 4,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(left: 12, top: 12, bottom: 16),
-                scrollDirection: Axis.horizontal,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: AppCachedNetworkImage(
-                      imageUrl:
-                          'https://images.pexels.com/photos/9001223/pexels-photo-9001223.jpeg',
-                      height: 44,
-                      width: 44,
-                      borderRadius: BorderRadius.circular(4),
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
+            if (widget.order?.productImages != null &&
+                widget.order!.productImages!.isNotEmpty)
+              SizedBox(
+                height: 70,
+                child: ListView.builder(
+                  itemCount: widget.order!.productImages!.length,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 12, top: 12, bottom: 16),
+                  scrollDirection: Axis.horizontal,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: AppCachedNetworkImage(
+                        imageUrl: widget.order!.productImages![index],
+                        height: 44,
+                        width: 44,
+                        borderRadius: BorderRadius.circular(4),
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              SizedBox(
+                height: 70,
+                child: ListView.builder(
+                  itemCount: 4,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 12, top: 12, bottom: 16),
+                  scrollDirection: Axis.horizontal,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: AppCachedNetworkImage(
+                        imageUrl:
+                            'https://images.pexels.com/photos/9001223/pexels-photo-9001223.jpeg',
+                        height: 44,
+                        width: 44,
+                        borderRadius: BorderRadius.circular(4),
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            Divider(
-              height: 0,
-              thickness: 0.6,
-              color: AppColors.darkSlateGrayColor,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: AppColors.darkGunmetalColor,
-                    disabledBackgroundColor: AppColors.darkGunmetalColor,
-                    fixedSize: Size(size.width / 2.2, 46),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
+            if (widget.order?.status == 'In Process' ||
+                widget.order?.status?.toLowerCase() == 'preparing' ||
+                widget.order?.status?.toLowerCase() == 'in_process' ||
+                widget.order?.status?.toLowerCase() == 'pending') ...[
+              Divider(
+                height: 0,
+                thickness: 0.6,
+                color: AppColors.darkSlateGrayColor,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed:
+                        (widget.order == null ||
+                            Provider.of<RiderViewModel>(context).actionLoading)
+                        ? null
+                        : () {
+                            Provider.of<RiderViewModel>(
+                              context,
+                              listen: false,
+                            ).rejectOrderApi(context, widget.order!.orderId!);
+                          },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: AppColors.darkGunmetalColor,
+                      disabledBackgroundColor: AppColors.darkGunmetalColor,
+                      fixedSize: Size(size.width / 2.2, 46),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                        ),
                       ),
                     ),
-                  ),
-                  child: CustomText(
-                    data: 'Cancel',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.whiteColor,
-                  ),
-                ),
-                Container(
-                  height: 46,
-                  width: 0.6,
-                  color: AppColors.darkSlateGrayColor,
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: AppColors.darkGunmetalColor,
-                    disabledBackgroundColor: AppColors.darkGunmetalColor,
-                    fixedSize: Size(size.width / 2.2, 46),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(16),
-                      ),
+                    child: CustomText(
+                      data: 'Cancel',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.whiteColor,
                     ),
                   ),
-                  child: CustomText(
-                    data: 'Accept',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primaryColor,
+                  Container(
+                    height: 46,
+                    width: 0.6,
+                    color: AppColors.darkSlateGrayColor,
                   ),
-                ),
-              ],
-            ),
+                  ElevatedButton(
+                    onPressed:
+                        (widget.order == null ||
+                            Provider.of<RiderViewModel>(context).actionLoading)
+                        ? null
+                        : () {
+                            Provider.of<RiderViewModel>(
+                              context,
+                              listen: false,
+                            ).acceptOrderApi(context, widget.order!.orderId!);
+                          },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: AppColors.darkGunmetalColor,
+                      disabledBackgroundColor: AppColors.darkGunmetalColor,
+                      fixedSize: Size(size.width / 2.2, 46),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                    ),
+                    child: Provider.of<RiderViewModel>(context).actionLoading
+                        ? Center(
+                            child:
+                                LoadingAnimationWidget.horizontalRotatingDots(
+                                  color: AppColors.primaryColor,
+                                  size: 30,
+                                ),
+                          )
+                        : CustomText(
+                            data: 'Accept',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryColor,
+                          ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

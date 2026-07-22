@@ -13,9 +13,9 @@ class AppUrl {
 
   /// Auth flow api url
 
-  static var signInUrl = '$baseUrl/register-or-login';
-  static var verifyUrl = '$baseUrl/verify-otp';
-  static var signUpUrl = '$baseUrl/register-or-login';
+  static var signInUrl = '$baseUrl/rider/login';
+  static var verifyUrl = '$baseUrl/rider/verify-otp';
+  static var signUpUrl = '$baseUrl/rider/login';
   static var getUserUrl = '$baseUrl/get-profile';
   static var editProfileUrl = '$baseUrl/edit-profile';
   static var deleteProfileUrl = '$baseUrl/delete-profile';
@@ -47,4 +47,16 @@ class AppUrl {
 
   // Config
   static var configApiUrl = '$baseUrl/config-api';
+
+  /// Rider APIs
+  static var riderDashboardUrl = '$baseUrl/rider/dashboard';
+  static var riderAvailableOrdersUrl = '$baseUrl/rider/available-orders';
+  static String riderOrderDetailsUrl(int id) => '$baseUrl/rider/orders/$id';
+  static String acceptOrderUrl(int id) => '$baseUrl/rider/orders/$id/accept';
+  static String rejectOrderUrl(int id) => '$baseUrl/rider/orders/$id/reject';
+  static String startDeliveryUrl(int id) => '$baseUrl/rider/orders/$id/start-delivery';
+  static String completeDeliveryUrl(int id) => '$baseUrl/rider/orders/$id/complete';
+  static var updateLocationUrl = '$baseUrl/rider/update-location';
+  static var updateStatusUrl = '$baseUrl/rider/update-status';
+  static var riderHistoryUrl = '$baseUrl/rider/history';
 }

@@ -49,15 +49,13 @@ class _SplashScreenState extends State<SplashScreen>
 
     debugPrint('Token => $token');
 
-    Navigator.pushReplacementNamed(context, RoutesName.signInScreen);
-
     if (token != null && token.toString().isNotEmpty) {
-      // Navigator.pushReplacementNamed(
-      //   context,
-      //   RoutesName.bottomNavigationBarScreen,
-      // );
+      Navigator.pushReplacementNamed(
+        context,
+        RoutesName.bottomNavigationBarScreen,
+      );
     } else {
-      // Navigator.pushReplacementNamed(context, RoutesName.onboardingScreen);
+      Navigator.pushReplacementNamed(context, RoutesName.signInScreen);
     }
   }
 
