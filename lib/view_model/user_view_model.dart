@@ -5,8 +5,7 @@ import '../model/user_model.dart';
 import '../repository/user_repository.dart';
 import '../res/routes/routes_name.dart';
 import '../services/shared_pref_service.dart';
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
+import '../res/constants/toast_message.dart';
 
 class UserViewModel with ChangeNotifier {
   bool _getUserLoading = false;
@@ -48,10 +47,11 @@ class UserViewModel with ChangeNotifier {
     } catch (e) {
       setUserLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }
@@ -83,18 +83,20 @@ class UserViewModel with ChangeNotifier {
         await getUserApi(context);
       }
       if (context.mounted) {
-        CherryToast.success(
-          title: const Text('Profile updated successfully.', style: TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          'Profile updated successfully.',
+          ToastType.success,
+        );
       }
     } catch (e) {
       setEditProfileLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }
@@ -118,10 +120,11 @@ class UserViewModel with ChangeNotifier {
 
       if (!context.mounted) return false;
 
-      CherryToast.success(
-        title: Text(response['message'] ?? 'Account deleted successfully.', style: const TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        response['message'] ?? 'Account deleted successfully.',
+        ToastType.success,
+      );
       Navigator.pushNamedAndRemoveUntil(
         context,
         RoutesName.signInScreen,
@@ -131,10 +134,11 @@ class UserViewModel with ChangeNotifier {
     } catch (e) {
       setDeleteProfileLoading(false);
       if (!context.mounted) return false;
-      CherryToast.error(
-        title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        e.toString(),
+        ToastType.error,
+      );
       return false;
     }
   }

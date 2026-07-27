@@ -1,4 +1,5 @@
 import 'package:bite_ex_delivery/res/components/custom_text.dart';
+import 'package:bite_ex_delivery/res/components/not_found.dart';
 import 'package:bite_ex_delivery/view/home_view/components/header_view.dart';
 import 'package:bite_ex_delivery/view/home_view/components/request_card.dart';
 import 'package:flutter/material.dart';
@@ -43,30 +44,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final riderVM = Provider.of<RiderViewModel>(context);
     final earnings = riderVM.dashboardData?.data?.totalEarnings ?? 0;
-    final deliveredOrders = riderVM.dashboardData?.data?.totalDeliveredOrders ?? 0;
+    final deliveredOrders =
+        riderVM.dashboardData?.data?.totalDeliveredOrders ?? 0;
     final currentDelivery = riderVM.dashboardData?.data?.currentDelivery;
 
     return Scaffold(
       backgroundColor: AppColors.secondaryColor,
       body: riderVM.dashboardLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primaryColor))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryColor),
+            )
           : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeaderView(),
-  
+
                   SizedBox(height: 16),
                   Row(
                     children: [
                       SizedBox(width: 16),
                       InfoCard(label: 'Total Earnings', count: '₹$earnings'),
                       SizedBox(width: 16),
-                      InfoCard(label: 'Total Order Delivered', count: '$deliveredOrders'),
+                      InfoCard(
+                        label: 'Total Order Delivered',
+                        count: '$deliveredOrders',
+                      ),
                       SizedBox(width: 16),
                     ],
                   ),
-  
+
                   if (currentDelivery != null) ...[
                     const CustomText(
                       data: 'Current Delivery',
@@ -77,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     RequestCard(order: currentDelivery),
                   ],
-                  
+
                   if (riderVM.availableOrdersData?.data != null &&
                       riderVM.availableOrdersData!.data!.isNotEmpty) ...[
                     const CustomText(
@@ -102,33 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (currentDelivery == null &&
                       (riderVM.availableOrdersData?.data == null ||
                           riderVM.availableOrdersData!.data!.isEmpty)) ...[
-                    const SizedBox(height: 80),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.inbox_outlined,
-                            size: 64,
-                            color: AppColors.coolGrayColor,
-                          ),
-                          SizedBox(height: 16),
-                          CustomText(
-                            data: 'No active or available orders',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.lightBlueGrayColor,
-                          ),
-                          SizedBox(height: 6),
-                          CustomText(
-                            data: 'New orders will appear here when available',
-                            fontSize: 13,
-                            color: AppColors.coolGrayColor,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 40),
+                    NotFound(title: 'No active or available orders'),
                   ],
                 ],
               ),

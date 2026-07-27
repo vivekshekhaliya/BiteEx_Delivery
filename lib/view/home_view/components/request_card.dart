@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:bite_ex_delivery/model/available_order_model.dart';
 import 'package:bite_ex_delivery/view_model/rider_view_model.dart';
+import 'package:bite_ex_delivery/view/map_view/map_screen.dart';
 
 class RequestCard extends StatefulWidget {
   final AvailableOrder? order;
@@ -138,13 +139,33 @@ class _RequestCardState extends State<RequestCard> {
                               fontWeight: FontWeight.w400,
                               color: AppColors.whiteColor,
                             ),
-                            CustomText(
-                              data:
-                                  widget.order?.dropLocation ??
-                                  "Ahmedabad University",
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.whiteColor,
+                            InkWell(
+                              onTap: () {
+                                final lat = widget.order?.latitude ?? 23.050473;
+                                final lng =
+                                    widget.order?.longitude ?? 72.533682;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MapScreen(
+                                      latitude: lat,
+                                      longitude: lng,
+                                      address:
+                                          widget.order?.dropLocation ??
+                                          "Ahmedabad University",
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: CustomText(
+                                data:
+                                    widget.order?.dropLocation ??
+                                    "Ahmedabad University",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.blueColor,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ],
                         ),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
+import '../res/constants/toast_message.dart';
 
 import '../repository/auth_repository.dart';
 import '../services/notification_service.dart';
@@ -34,10 +33,11 @@ class AuthViewModel with ChangeNotifier {
         verificationCompleted: (PhoneAuthCredential credential) {},
         verificationFailed: (FirebaseAuthException e) {
           setLoginLoading(false);
-          CherryToast.error(
-            title: Text(e.message.toString(), style: const TextStyle(color: Colors.black)),
-            animationType: AnimationType.fromTop,
-          ).show(context);
+          ToastMessage.cherryMessage(
+            context,
+            e.message.toString(),
+            ToastType.error,
+          );
         },
         codeSent: (String vId, int? resendToken) async {
           try {
@@ -48,10 +48,11 @@ class AuthViewModel with ChangeNotifier {
               fcmToken: fcmToken,
             );
             setLoginLoading(false);
-            CherryToast.success(
-              title: const Text('OTP sent successfully.', style: TextStyle(color: Colors.black)),
-              animationType: AnimationType.fromTop,
-            ).show(context);
+            ToastMessage.cherryMessage(
+              context,
+              'OTP sent successfully.',
+              ToastType.success,
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -60,10 +61,11 @@ class AuthViewModel with ChangeNotifier {
             );
           } catch (e) {
             setLoginLoading(false);
-            CherryToast.error(
-              title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-              animationType: AnimationType.fromTop,
-            ).show(context);
+            ToastMessage.cherryMessage(
+              context,
+              e.toString(),
+              ToastType.error,
+            );
           }
         },
         codeAutoRetrievalTimeout: (String vId) {
@@ -72,10 +74,11 @@ class AuthViewModel with ChangeNotifier {
       );
     } catch (e) {
       setLoginLoading(false);
-      CherryToast.error(
-        title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        e.toString(),
+        ToastType.error,
+      );
     }
   }
 
@@ -97,10 +100,11 @@ class AuthViewModel with ChangeNotifier {
         verificationCompleted: (PhoneAuthCredential credential) {},
         verificationFailed: (FirebaseAuthException e) {
           setResendLoading(false);
-          CherryToast.error(
-            title: Text(e.message.toString(), style: const TextStyle(color: Colors.black)),
-            animationType: AnimationType.fromTop,
-          ).show(context);
+          ToastMessage.cherryMessage(
+            context,
+            e.message.toString(),
+            ToastType.error,
+          );
         },
         codeSent: (String vId, int? resendToken) async {
           try {
@@ -111,16 +115,18 @@ class AuthViewModel with ChangeNotifier {
               fcmToken: fcmToken,
             );
             setResendLoading(false);
-            CherryToast.success(
-              title: const Text('OTP sent successfully.', style: TextStyle(color: Colors.black)),
-              animationType: AnimationType.fromTop,
-            ).show(context);
+            ToastMessage.cherryMessage(
+              context,
+              'OTP sent successfully.',
+              ToastType.success,
+            );
           } catch (e) {
             setResendLoading(false);
-            CherryToast.error(
-              title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-              animationType: AnimationType.fromTop,
-            ).show(context);
+            ToastMessage.cherryMessage(
+              context,
+              e.toString(),
+              ToastType.error,
+            );
           }
         },
         codeAutoRetrievalTimeout: (String vId) {
@@ -129,10 +135,11 @@ class AuthViewModel with ChangeNotifier {
       );
     } catch (e) {
       setResendLoading(false);
-      CherryToast.error(
-        title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        e.toString(),
+        ToastType.error,
+      );
     }
   }
 
@@ -162,10 +169,11 @@ class AuthViewModel with ChangeNotifier {
         otp: '1111',
       );
       setVerifyLoading(false);
-      CherryToast.success(
-        title: const Text('OTP verified successfully.', style: TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        'OTP verified successfully.',
+        ToastType.success,
+      );
 
       if (response['token'] != null) {
         final userViewModel = Provider.of<UserViewModel>(
@@ -183,16 +191,18 @@ class AuthViewModel with ChangeNotifier {
       );
     } on FirebaseAuthException catch (e) {
       setVerifyLoading(false);
-      CherryToast.error(
-        title: Text(e.message ?? 'Invalid OTP', style: const TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        e.message ?? 'Invalid OTP',
+        ToastType.error,
+      );
     } catch (e) {
       setVerifyLoading(false);
-      CherryToast.error(
-        title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-        animationType: AnimationType.fromTop,
-      ).show(context);
+      ToastMessage.cherryMessage(
+        context,
+        e.toString(),
+        ToastType.error,
+      );
     }
   }
 
@@ -210,13 +220,11 @@ class AuthViewModel with ChangeNotifier {
         );
         userViewModel.setUser(null);
 
-        CherryToast.success(
-          title: const Text(
-            'Logged out successfully.',
-            style: TextStyle(color: Colors.black),
-          ),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          'Logged out successfully.',
+          ToastType.success,
+        );
 
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -226,13 +234,11 @@ class AuthViewModel with ChangeNotifier {
       }
     } catch (e) {
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(
-            e.toString(),
-            style: const TextStyle(color: Colors.black),
-          ),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }

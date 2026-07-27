@@ -185,7 +185,8 @@ class _UserProfileImageState extends State<UserProfileImage> {
     return Consumer<UserViewModel>(
       builder: (context, userViewModel, child) {
         final user = userViewModel.user;
-        final displayName = user?.name ?? (name.isNotEmpty ? name : 'Your Account');
+        final displayName =
+            user?.name ?? (name.isNotEmpty ? name : 'Your Account');
         final displayMobile = user?.mobile ?? (mobile.isNotEmpty ? mobile : '');
         final displayImage = user?.image ?? image;
 
@@ -254,7 +255,7 @@ class _UserProfileImageState extends State<UserProfileImage> {
               if (displayMobile.isNotEmpty) ...[
                 SizedBox(height: 6),
                 CustomText(
-                  data: displayMobile,
+                  data: '+91 $displayMobile',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: AppColors.lightBlueGrayColor,

@@ -19,7 +19,7 @@ class _HeaderViewState extends State<HeaderView> {
     final insets = MediaQuery.of(context).padding;
     final riderVM = Provider.of<RiderViewModel>(context);
     final riderName = riderVM.dashboardData?.data?.riderName ?? "Rider";
-    
+
     return Container(
       margin: EdgeInsets.only(
         left: 16,
@@ -70,53 +70,52 @@ class _HeaderViewState extends State<HeaderView> {
           const Spacer(),
 
           // Rider Online / Offline ON-OFF Toggle Switch
-          GestureDetector(
-            onTap: () async {
-              final newStatus = !riderVM.isOnline;
-              await riderVM.updateRiderStatusApi(context, newStatus);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: riderVM.isOnline
-                    ? AppColors.primaryColor.withAlpha(40)
-                    : AppColors.crimsonRedColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: riderVM.isOnline
-                      ? AppColors.primaryColor
-                      : AppColors.crimsonRedColor,
-                  width: 1.2,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: riderVM.isOnline
-                          ? AppColors.primaryColor
-                          : AppColors.crimsonRedColor,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  CustomText(
-                    data: riderVM.isOnline ? 'ON' : 'OFF',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: riderVM.isOnline
-                        ? AppColors.primaryColor
-                        : AppColors.crimsonRedColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
+          // GestureDetector(
+          //   onTap: () async {
+          //     final newStatus = !riderVM.isOnline;
+          //     await riderVM.updateRiderStatusApi(context, newStatus);
+          //   },
+          //   child: AnimatedContainer(
+          //     duration: const Duration(milliseconds: 250),
+          //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          //     decoration: BoxDecoration(
+          //       color: riderVM.isOnline
+          //           ? AppColors.primaryColor.withAlpha(40)
+          //           : AppColors.crimsonRedColor.withAlpha(40),
+          //       borderRadius: BorderRadius.circular(20),
+          //       border: Border.all(
+          //         color: riderVM.isOnline
+          //             ? AppColors.primaryColor
+          //             : AppColors.crimsonRedColor,
+          //         width: 1.2,
+          //       ),
+          //     ),
+          //     child: Row(
+          //       mainAxisSize: MainAxisSize.min,
+          //       children: [
+          //         Container(
+          //           width: 8,
+          //           height: 8,
+          //           decoration: BoxDecoration(
+          //             shape: BoxShape.circle,
+          //             color: riderVM.isOnline
+          //                 ? AppColors.primaryColor
+          //                 : AppColors.crimsonRedColor,
+          //           ),
+          //         ),
+          //         const SizedBox(width: 6),
+          //         CustomText(
+          //           data: riderVM.isOnline ? 'ON' : 'OFF',
+          //           fontSize: 13,
+          //           fontWeight: FontWeight.w700,
+          //           color: riderVM.isOnline
+          //               ? AppColors.primaryColor
+          //               : AppColors.crimsonRedColor,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const SizedBox(width: 12),
 
           IconButton(

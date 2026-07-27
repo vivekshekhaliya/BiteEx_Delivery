@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:cherry_toast/cherry_toast.dart';
-import 'package:cherry_toast/resources/arrays.dart';
+import '../res/constants/toast_message.dart';
 
 import '../model/available_order_model.dart';
 import '../model/order_details_model.dart';
@@ -55,10 +54,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setDashboardLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }
@@ -89,10 +89,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setAvailableOrdersLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }
@@ -123,10 +124,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setOrderDetailsLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }
@@ -157,10 +159,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setHistoryLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
     }
   }
@@ -180,10 +183,11 @@ class RiderViewModel with ChangeNotifier {
       final response = await RiderRepository.acceptOrder(orderId);
       setActionLoading(false);
       if (context.mounted) {
-        CherryToast.success(
-          title: Text(response['message'] ?? 'Order accepted successfully', style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          response['message'] ?? 'Order accepted successfully',
+          ToastType.success,
+        );
         getRiderDashboardApi(context);
         getAvailableOrdersApi(context);
       }
@@ -191,10 +195,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
       return false;
     }
@@ -206,10 +211,11 @@ class RiderViewModel with ChangeNotifier {
       final response = await RiderRepository.rejectOrder(orderId);
       setActionLoading(false);
       if (context.mounted) {
-        CherryToast.success(
-          title: Text(response['message'] ?? 'Order rejected successfully', style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          response['message'] ?? 'Order rejected successfully',
+          ToastType.success,
+        );
         getRiderDashboardApi(context);
         getAvailableOrdersApi(context);
       }
@@ -217,10 +223,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
       return false;
     }
@@ -236,20 +243,22 @@ class RiderViewModel with ChangeNotifier {
       RiderLocationTracker().startTracking(orderId);
 
       if (context.mounted) {
-        CherryToast.success(
-          title: Text(response['message'] ?? 'Delivery started', style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          response['message'] ?? 'Delivery started',
+          ToastType.success,
+        );
         getRiderDashboardApi(context);
       }
       return true;
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
       return false;
     }
@@ -265,10 +274,11 @@ class RiderViewModel with ChangeNotifier {
       RiderLocationTracker().stopTracking();
 
       if (context.mounted) {
-        CherryToast.success(
-          title: Text(response['message'] ?? 'Delivery completed successfully', style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          response['message'] ?? 'Delivery completed successfully',
+          ToastType.success,
+        );
         getRiderDashboardApi(context);
         getAvailableOrdersApi(context);
       }
@@ -276,10 +286,11 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
       return false;
     }
@@ -291,21 +302,20 @@ class RiderViewModel with ChangeNotifier {
       final response = await RiderRepository.updateStatus(statusString);
       setOnlineStatus(status);
       if (context.mounted) {
-        CherryToast.success(
-          title: Text(
-            response['message'] ?? 'Rider is now ${status ? "Online" : "Offline"}',
-            style: const TextStyle(color: Colors.black),
-          ),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          response['message'] ?? 'Rider is now ${status ? "Online" : "Offline"}',
+          ToastType.success,
+        );
       }
       return true;
     } catch (e) {
       if (context.mounted) {
-        CherryToast.error(
-          title: Text(e.toString(), style: const TextStyle(color: Colors.black)),
-          animationType: AnimationType.fromTop,
-        ).show(context);
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
       }
       return false;
     }

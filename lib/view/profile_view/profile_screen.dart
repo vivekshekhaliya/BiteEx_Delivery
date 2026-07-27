@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../res/components/custom_text.dart';
 import '../../res/constants/app_colors.dart';
+import '../../res/routes/routes_name.dart';
 import '../../view_model/auth_view_model.dart';
 import 'components/menu_item.dart';
 import 'components/user_profile_image.dart';
@@ -21,9 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.darkGunmetalColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const CustomText(
           data: "Logout",
           fontSize: 18,
@@ -115,9 +114,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               children: [
                 MenuItem(
+                  assetName: 'assets/svg_icon/about_icon.svg',
+                  title: "About",
+                  onTap: () {
+                    Navigator.pushNamed(context, RoutesName.aboutScreen);
+                  },
+                ),
+                _divider(),
+                MenuItem(
                   assetName: 'assets/svg_icon/faq_icon.svg',
                   title: "FAQs",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, RoutesName.faqScreen);
+                  },
                 ),
                 _divider(),
                 MenuItem(
