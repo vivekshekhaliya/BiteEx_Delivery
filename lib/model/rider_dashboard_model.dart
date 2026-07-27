@@ -26,12 +26,14 @@ class RiderDashboardModel {
 
 class RiderDashboardData {
   String? riderName;
+  bool? isSalaried;
   dynamic totalEarnings;
   int? totalDeliveredOrders;
   AvailableOrder? currentDelivery;
 
   RiderDashboardData({
     this.riderName,
+    this.isSalaried,
     this.totalEarnings,
     this.totalDeliveredOrders,
     this.currentDelivery,
@@ -39,6 +41,7 @@ class RiderDashboardData {
 
   RiderDashboardData.fromJson(Map<String, dynamic> json) {
     riderName = json['rider_name'];
+    isSalaried = json['is_salaried'];
     totalEarnings = json['total_earnings'];
     totalDeliveredOrders = json['total_delivered_orders'];
     currentDelivery = json['current_delivery'] != null ? AvailableOrder.fromJson(json['current_delivery']) : null;
@@ -47,6 +50,7 @@ class RiderDashboardData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['rider_name'] = riderName;
+    data['is_salaried'] = isSalaried;
     data['total_earnings'] = totalEarnings;
     data['total_delivered_orders'] = totalDeliveredOrders;
     // data['current_delivery'] = currentDelivery; // Optionally add toJson for AvailableOrder if needed

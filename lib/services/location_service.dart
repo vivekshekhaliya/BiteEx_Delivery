@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:geolocator/geolocator.dart';
 
+import '../repository/rider_repository.dart';
+
 enum LocationStatus {
   serviceDisabled,
   permissionDenied,
@@ -15,7 +17,7 @@ enum LocationStatus {
 class LocationService {
   static double _targetLatitude = 23.050473;
   static double _targetLongitude = 72.533682;
-  static double _maxDistanceMeters = 100.0;
+  static double _maxDistanceMeters = 80.0;
 
   static void setTargetLocation(double latitude, double longitude) {
     _targetLatitude = latitude;
@@ -54,25 +56,23 @@ class LocationService {
     }
   }
 
-  /// Checks whether the user is within [_maxDistanceMeters] of the target
-  /// location. Returns a [LocationCheckResult] with the outcome.
-  ///
-  /// [outOfRangeMessage] — optional custom message when the user is too far.
-  static Future<LocationCheckResult> isWithinServiceableArea({
-    String? outOfRangeMessage,
+  /// Checks whether the rider is within [radiusInMeters] (default 80m) of the outlet premises.
+  static Future<LocationCheckResult> checkOutletRadius({
+    double radiusInMeters = 80.0,
+    double? targetLat,
+    double? targetLng,
   }) async {
-    // 1. Check if location services are enabled.
+    // 1. Check location services
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return const LocationCheckResult(
         allowed: false,
         status: LocationStatus.serviceDisabled,
-        message:
-        'Location services are disabled. Please enable them in your device settings.',
+        message: 'Location services are disabled. Please enable GPS to accept orders.',
       );
     }
 
-    // 2. Check & request permission.
+    // 2. Check location permissions
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -80,7 +80,7 @@ class LocationService {
         return const LocationCheckResult(
           allowed: false,
           status: LocationStatus.permissionDenied,
-          message: 'Location permission is required to place an order.',
+          message: 'Location permission is required to accept orders.',
         );
       }
     }
@@ -89,46 +89,54 @@ class LocationService {
       return const LocationCheckResult(
         allowed: false,
         status: LocationStatus.permissionDeniedForever,
-        message:
-        'Location permissions are permanently denied. Please enable them from your device settings.',
+        message: 'Location permissions are permanently denied. Please enable them in app settings.',
       );
     }
 
-    // 3. Get current position with timeout & fallback.
-    Position? position;
-    try {
-      position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 8),
-        ),
-      );
-    } catch (_) {
-      try {
-        position = await Geolocator.getLastKnownPosition();
-      } catch (_) {
-        position = null;
-      }
-    }
-
+    // 3. Get current rider location
+    Position? position = await getCurrentLocation();
     if (position == null) {
       return const LocationCheckResult(
         allowed: false,
         status: LocationStatus.timeoutOrError,
-        message:
-        'Unable to retrieve your current location. Please ensure GPS is working and try again.',
+        message: 'Unable to retrieve your current location. Please check GPS and try again.',
       );
     }
 
-    // 4. Calculate distance using the Haversine formula.
+    // 4. Determine target outlet location
+    double outletLat = targetLat ?? _targetLatitude;
+    double outletLng = targetLng ?? _targetLongitude;
+
+    if (targetLat == null || targetLng == null) {
+      try {
+        final outletData = await RiderRepository.getNearestOutlet(
+          latitude: position.latitude,
+          longitude: position.longitude,
+        );
+
+        final rawOutlet = outletData['data'];
+        if (rawOutlet != null) {
+          final parsedLat = rawOutlet['latitude'] is num ? (rawOutlet['latitude'] as num).toDouble() : null;
+          final parsedLng = rawOutlet['longitude'] is num ? (rawOutlet['longitude'] as num).toDouble() : null;
+          if (parsedLat != null && parsedLng != null) {
+            outletLat = parsedLat;
+            outletLng = parsedLng;
+          }
+        }
+      } catch (_) {
+        // Fall back to target lat/lng if API call fails
+      }
+    }
+
+    // 5. Calculate distance in meters
     final distance = _calculateDistance(
       position.latitude,
       position.longitude,
-      _targetLatitude,
-      _targetLongitude,
+      outletLat,
+      outletLng,
     );
 
-    if (distance <= _maxDistanceMeters) {
+    if (distance <= radiusInMeters) {
       return LocationCheckResult(
         allowed: true,
         status: LocationStatus.allowed,
@@ -140,9 +148,19 @@ class LocationService {
       allowed: false,
       status: LocationStatus.outOfRange,
       distanceMeters: distance,
-      message:
-      outOfRangeMessage ??
-          'You are outside the serviceable area. Orders are only allowed within 50 meters of the specified location.',
+      message: 'You must be within an ${radiusInMeters.toInt()}-meter radius of the outlet premises to accept orders. (Current distance: ${distance.toStringAsFixed(1)}m)',
+    );
+  }
+
+  /// Checks whether the user is within [_maxDistanceMeters] of the target
+  /// location. Returns a [LocationCheckResult] with the outcome.
+  ///
+  /// [outOfRangeMessage] — optional custom message when the user is too far.
+  static Future<LocationCheckResult> isWithinServiceableArea({
+    String? outOfRangeMessage,
+  }) async {
+    return checkOutletRadius(
+      radiusInMeters: _maxDistanceMeters,
     );
   }
 

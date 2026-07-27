@@ -44,6 +44,23 @@ class RiderRepository {
     }
   }
 
+  /// GET NEAREST OUTLET REQUEST
+  static Future<Map<String, dynamic>> getNearestOutlet({
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      Response response = await ApiClient.dio.get(
+        AppUrl.nearestOutletUrl,
+        queryParameters: {"latitude": latitude, "longitude": longitude},
+      );
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiClient.handleError(e);
+    }
+  }
+
+
   /// ACCEPT ORDER REQUEST
   static Future<Map<String, dynamic>> acceptOrder(int id) async {
     try {

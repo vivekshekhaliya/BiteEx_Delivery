@@ -7,6 +7,7 @@ import '../model/order_details_model.dart';
 import '../model/rider_dashboard_model.dart';
 import '../model/rider_history_model.dart';
 import '../repository/rider_repository.dart';
+import '../services/location_service.dart';
 import '../services/rider_location_tracker.dart';
 
 class RiderViewModel with ChangeNotifier {
@@ -177,9 +178,28 @@ class RiderViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> acceptOrderApi(BuildContext context, int orderId) async {
+  Future<bool> acceptOrderApi(BuildContext context, int orderId, {double? pickupLat, double? pickupLng}) async {
     setActionLoading(true);
     try {
+      // Enforce 80-meter radius restriction relative to outlet premises
+      final locationResult = await LocationService.checkOutletRadius(
+        radiusInMeters: 80.0,
+        targetLat: pickupLat,
+        targetLng: pickupLng,
+      );
+
+      if (!locationResult.allowed) {
+        setActionLoading(false);
+        if (context.mounted) {
+          ToastMessage.cherryMessage(
+            context,
+            locationResult.message ?? 'You must be within an 80-meter radius of the outlet premises to accept orders.',
+            ToastType.error,
+          );
+        }
+        return false;
+      }
+
       final response = await RiderRepository.acceptOrder(orderId);
       setActionLoading(false);
       if (context.mounted) {

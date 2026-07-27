@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     final riderVM = Provider.of<RiderViewModel>(context);
+    final isSalaried = riderVM.dashboardData?.data?.isSalaried ?? false;
     final earnings = riderVM.dashboardData?.data?.totalEarnings ?? 0;
     final deliveredOrders =
         riderVM.dashboardData?.data?.totalDeliveredOrders ?? 0;
@@ -64,8 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       SizedBox(width: 16),
-                      InfoCard(label: 'Total Earnings', count: '₹$earnings'),
-                      SizedBox(width: 16),
+                      if (!isSalaried) ...[
+                        InfoCard(label: 'Total Earnings', count: '₹$earnings'),
+                        SizedBox(width: 16),
+                      ],
                       InfoCard(
                         label: 'Total Order Delivered',
                         count: '$deliveredOrders',
