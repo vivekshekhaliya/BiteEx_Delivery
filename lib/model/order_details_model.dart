@@ -104,9 +104,9 @@ class Drop {
 
   factory Drop.fromJson(Map<String, dynamic> json) {
     return Drop(
-      address: json['address']?.toString(),
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      address: json['address']?.toString() ?? json['drop_location']?.toString(),
+      latitude: json['latitude'] ?? json['drop_latitude'] ?? json['drop_lat'] ?? json['lat'],
+      longitude: json['longitude'] ?? json['drop_longitude'] ?? json['drop_lng'] ?? json['lng'],
     );
   }
 }
