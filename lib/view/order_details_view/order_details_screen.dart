@@ -122,6 +122,85 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       paymentMethod: order.paymentMethod,
                     ),
 
+                    if (isOnTheWay && showCollectUpi) ...[
+                      InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => QrCodeSheet(
+                              orderId: order.orderId!,
+                              amount:
+                                  double.tryParse(
+                                        order.totalAmount?.toString() ?? '0',
+                                      ) ??
+                                      0.0,
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: Ink(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 18,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: AppColors.primaryColor.withOpacity(0.05),
+                            border: Border.all(
+                              color: AppColors.primaryColor.withOpacity(0.3),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor.withOpacity(0.12),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.qr_code_2,
+                                  color: AppColors.primaryColor,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const CustomText(
+                                      data: 'Collect UPI Payment',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.whiteColor,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    CustomText(
+                                      data:
+                                          'Collect ₹${double.tryParse(order.totalAmount?.toString() ?? '0')?.toStringAsFixed(2) ?? '0.00'} digitally. Click to show QR.',
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.normal,
+                                      color: AppColors.lightCoolGrayColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.chevron_right,
+                                color: AppColors.coolGrayColor,
+                                size: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+
                     if (order.deliveryInstructions != null &&
                         order.deliveryInstructions!.isNotEmpty) ...[
                       const CustomText(
@@ -251,58 +330,33 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ],
                       )
                     : (isOnTheWay && showCollectUpi)
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomAppButton(
-                            text: 'Collect UPI Payment',
-                            isLoading: riderVM.qrLoading,
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) => QrCodeSheet(
-                                  orderId: order.orderId!,
-                                  amount:
-                                      double.tryParse(
-                                        order.totalAmount?.toString() ?? '0',
-                                      ) ??
-                                      0.0,
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          Opacity(
-                            opacity: riderVM.isQrActive ? 0.5 : 1.0,
-                            child: CustomAppButton(
-                              text: 'Complete Delivery',
-                              isLoading: riderVM.actionLoading,
-                              onPressed: riderVM.isQrActive
-                                  ? null
-                                  : () async {
-                                      if (order.orderId != null) {
-                                        final otp =
-                                            _otpController.text
-                                                .trim()
-                                                .isNotEmpty
-                                            ? _otpController.text.trim()
-                                            : '1234';
-                                        final success = await riderVM
-                                            .completeDeliveryApi(
-                                              context,
-                                              order.orderId!,
-                                              otp: otp,
-                                            );
-                                        if (success && context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      }
-                                    },
-                            ),
-                          ),
-                        ],
+                    ? Opacity(
+                        opacity: riderVM.isQrActive ? 0.5 : 1.0,
+                        child: CustomAppButton(
+                          text: 'Complete Delivery',
+                          isLoading: riderVM.actionLoading,
+                          onPressed: riderVM.isQrActive
+                              ? null
+                              : () async {
+                                  if (order.orderId != null) {
+                                    final otp =
+                                        _otpController.text
+                                            .trim()
+                                            .isNotEmpty
+                                        ? _otpController.text.trim()
+                                        : '1234';
+                                    final success = await riderVM
+                                        .completeDeliveryApi(
+                                          context,
+                                          order.orderId!,
+                                          otp: otp,
+                                        );
+                                    if (success && context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  }
+                                },
+                        ),
                       )
                     : CustomAppButton(
                         text: isOnTheWay

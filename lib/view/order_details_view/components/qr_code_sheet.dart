@@ -188,8 +188,8 @@ class _QrCodeSheetState extends State<QrCodeSheet> {
   Widget _buildQrImage(String qrSource) {
     if (qrSource.isEmpty) {
       return const SizedBox(
-        width: 280,
-        height: 280,
+        width: 300,
+        height: 300,
         child: Center(
           child: CustomText(
             data: "No QR Code source provided",
@@ -207,30 +207,30 @@ class _QrCodeSheetState extends State<QrCodeSheet> {
           .replaceAll(RegExp(r'\s+'), '');
       try {
         final bytes = base64Decode(base64Str);
-        return Image.memory(bytes, width: 280, height: 280, fit: BoxFit.cover);
+        return Image.memory(bytes, width: 300, height: 300, fit: BoxFit.cover);
       } catch (e) {
         return const SizedBox(
-          width: 280,
-          height: 280,
+          width: 300,
+          height: 300,
           child: Icon(Icons.broken_image, size: 80, color: Colors.redAccent),
         );
       }
     } else if (qrSource.startsWith('http') || qrSource.startsWith('https')) {
       return CachedNetworkImage(
         imageUrl: qrSource,
-        width: 280,
-        height: 280,
+        width: 300,
+        height: 300,
         fit: BoxFit.cover,
         placeholder: (context, url) => const SizedBox(
-          width: 280,
-          height: 280,
+          width: 300,
+          height: 300,
           child: Center(
             child: CircularProgressIndicator(color: AppColors.primaryColor),
           ),
         ),
         errorWidget: (context, url, error) => const SizedBox(
-          width: 280,
-          height: 280,
+          width: 300,
+          height: 300,
           child: Icon(Icons.broken_image, size: 80, color: Colors.redAccent),
         ),
       );
@@ -238,11 +238,11 @@ class _QrCodeSheetState extends State<QrCodeSheet> {
       // Attempt decoding raw base64 if not HTTP URL
       try {
         final bytes = base64Decode(qrSource);
-        return Image.memory(bytes, width: 280, height: 280, fit: BoxFit.cover);
+        return Image.memory(bytes, width: 300, height: 300, fit: BoxFit.cover);
       } catch (_) {
         return const SizedBox(
-          width: 280,
-          height: 280,
+          width: 300,
+          height: 300,
           child: Icon(Icons.broken_image, size: 80, color: Colors.redAccent),
         );
       }
