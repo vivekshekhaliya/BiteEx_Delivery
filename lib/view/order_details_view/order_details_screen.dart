@@ -55,7 +55,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   bool _isPreparingOrPending(String? status) {
     if (status == null) return false;
     final lower = status.toLowerCase();
-    return lower == 'preparing' || lower == 'in process' || lower == 'in_process' || lower == 'pending';
+    return lower == 'preparing' ||
+        lower == 'in process' ||
+        lower == 'in_process' ||
+        lower == 'pending';
   }
 
   @override
@@ -101,9 +104,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     PickupDropLocation(pickup: order.pickup, drop: order.drop),
 
                     if (isOnTheWay)
-                      CompleteVerification(
-                        controller: _otpController,
-                      ),
+                      CompleteVerification(controller: _otpController),
 
                     FoodProduct(
                       items: order.items,
@@ -146,7 +147,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
               ),
             ),
-      bottomNavigationBar: order == null || riderVM.orderDetailsLoading || isCompleted
+      bottomNavigationBar:
+          order == null || riderVM.orderDetailsLoading || isCompleted
           ? const SizedBox.shrink()
           : Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
@@ -179,8 +181,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: AppColors.darkGunmetalColor,
-                              disabledBackgroundColor: AppColors.darkGunmetalColor,
-                              side: const BorderSide(color: AppColors.jetGrayColor),
+                              disabledBackgroundColor:
+                                  AppColors.darkGunmetalColor,
+                              side: const BorderSide(
+                                color: AppColors.jetGrayColor,
+                              ),
                               fixedSize: Size(size.width / 2.3, 48),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -203,7 +208,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         order.orderId!,
                                       );
                                       if (res && context.mounted) {
-                                        riderVM.getOrderDetailsApi(context, order.orderId!);
+                                        riderVM.getOrderDetailsApi(
+                                          context,
+                                          order.orderId!,
+                                        );
                                       }
                                     }
                                   },
@@ -218,10 +226,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             ),
                             child: riderVM.actionLoading
                                 ? Center(
-                                    child: LoadingAnimationWidget.horizontalRotatingDots(
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
+                                    child:
+                                        LoadingAnimationWidget.horizontalRotatingDots(
+                                          color: Colors.white,
+                                          size: 30,
+                                        ),
                                   )
                                 : const CustomText(
                                     data: 'Accept',
@@ -233,7 +242,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ],
                       )
                     : CustomAppButton(
-                        text: isOnTheWay ? 'Complete Delivery' : 'Start Delivery',
+                        text: isOnTheWay
+                            ? 'Complete Delivery'
+                            : 'Start Delivery',
                         isLoading: riderVM.actionLoading,
                         onPressed: () async {
                           if (order.orderId != null) {
@@ -250,9 +261,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 Navigator.pop(context);
                               }
                             } else {
-                              await riderVM.startDeliveryApi(context, order.orderId!);
+                              await riderVM.startDeliveryApi(
+                                context,
+                                order.orderId!,
+                              );
                               if (context.mounted) {
-                                riderVM.getOrderDetailsApi(context, order.orderId!);
+                                riderVM.getOrderDetailsApi(
+                                  context,
+                                  order.orderId!,
+                                );
                               }
                             }
                           }

@@ -112,7 +112,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (currentDelivery == null &&
                       (riderVM.availableOrdersData?.data == null ||
                           riderVM.availableOrdersData!.data!.isEmpty)) ...[
-                    NotFound(title: 'No active or available orders'),
+                    NotFound(
+                      title: 'No active or available orders',
+                      height: 180,
+                    ),
                   ],
                 ],
               ),
