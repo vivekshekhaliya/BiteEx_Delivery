@@ -56,6 +56,8 @@ class AppUrl {
   static String rejectOrderUrl(int id) => '$baseUrl/rider/orders/$id/reject';
   static String startDeliveryUrl(int id) => '$baseUrl/rider/orders/$id/start-delivery';
   static String completeDeliveryUrl(int id) => '$baseUrl/rider/orders/$id/complete';
+  static String riderGenerateQrUrl(int id) => '$baseUrl/orders/$id/generate-qr';
+  static String riderPaymentStatusUrl(int id) => '$baseUrl/orders/$id/payment-status';
   static var updateLocationUrl = '$baseUrl/rider/update-location';
   static var updateStatusUrl = '$baseUrl/rider/update-status';
   static var riderHistoryUrl = '$baseUrl/rider/history';

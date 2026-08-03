@@ -5,6 +5,7 @@ import 'package:bite_ex_delivery/view/order_details_view/components/food_product
 import 'package:bite_ex_delivery/view/order_details_view/components/order_number.dart';
 import 'package:bite_ex_delivery/view/order_details_view/components/pickup_drop_location.dart';
 import 'package:bite_ex_delivery/view/order_details_view/components/user_contact.dart';
+import 'package:bite_ex_delivery/view/order_details_view/components/qr_code_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../res/components/custom_app_bar.dart';
@@ -69,6 +70,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     final isCompleted = _isCompleted(order?.status);
     final isPreparing = _isPreparingOrPending(order?.status);
     final size = MediaQuery.of(context).size;
+
+    final method = order?.paymentMethod?.toUpperCase();
+    final showCollectUpi =
+        (method == 'COD' || method == 'CASH') &&
+        (order?.paymentStatus == null ||
+            order?.paymentStatus?.trim().isEmpty == true ||
+            order?.paymentStatus?.toLowerCase() == 'pending' ||
+            order?.paymentStatus?.toLowerCase() == 'unpaid');
 
     return Scaffold(
       backgroundColor: AppColors.secondaryColor,
@@ -238,6 +247,60 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
+                          ),
+                        ],
+                      )
+                    : (isOnTheWay && showCollectUpi)
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomAppButton(
+                            text: 'Collect UPI Payment',
+                            isLoading: riderVM.qrLoading,
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) => QrCodeSheet(
+                                  orderId: order.orderId!,
+                                  amount:
+                                      double.tryParse(
+                                        order.totalAmount?.toString() ?? '0',
+                                      ) ??
+                                      0.0,
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          Opacity(
+                            opacity: riderVM.isQrActive ? 0.5 : 1.0,
+                            child: CustomAppButton(
+                              text: 'Complete Delivery',
+                              isLoading: riderVM.actionLoading,
+                              onPressed: riderVM.isQrActive
+                                  ? null
+                                  : () async {
+                                      if (order.orderId != null) {
+                                        final otp =
+                                            _otpController.text
+                                                .trim()
+                                                .isNotEmpty
+                                            ? _otpController.text.trim()
+                                            : '1234';
+                                        final success = await riderVM
+                                            .completeDeliveryApi(
+                                              context,
+                                              order.orderId!,
+                                              otp: otp,
+                                            );
+                                        if (success && context.mounted) {
+                                          Navigator.pop(context);
+                                        }
+                                      }
+                                    },
+                            ),
                           ),
                         ],
                       )

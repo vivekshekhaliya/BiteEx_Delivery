@@ -106,6 +106,26 @@ class RiderRepository {
     }
   }
 
+  /// GENERATE PAYMENT QR REQUEST
+  static Future<Map<String, dynamic>> generatePaymentQr(int id) async {
+    try {
+      Response response = await ApiClient.dio.post(AppUrl.riderGenerateQrUrl(id));
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiClient.handleError(e);
+    }
+  }
+
+  /// CHECK PAYMENT STATUS REQUEST
+  static Future<Map<String, dynamic>> checkPaymentStatus(int id) async {
+    try {
+      Response response = await ApiClient.dio.get(AppUrl.riderPaymentStatusUrl(id));
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiClient.handleError(e);
+    }
+  }
+
   /// UPDATE RIDER LOCATION REQUEST
   static Future<Map<String, dynamic>> updateLocation({
     required double latitude,

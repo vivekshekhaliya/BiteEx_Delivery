@@ -134,6 +134,95 @@ class RiderViewModel with ChangeNotifier {
     }
   }
 
+  // --- QR Payment State ---
+  bool _qrLoading = false;
+  bool get qrLoading => _qrLoading;
+
+  Map<String, dynamic>? _qrData;
+  Map<String, dynamic>? get qrData => _qrData;
+
+  bool _isQrActive = false;
+  bool get isQrActive => _isQrActive;
+
+  void setQrLoading(bool value) {
+    _qrLoading = value;
+    notifyListeners();
+  }
+
+  void setQrData(Map<String, dynamic>? data) {
+    _qrData = data;
+    notifyListeners();
+  }
+
+  void setQrActive(bool value) {
+    _isQrActive = value;
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>?> generatePaymentQrApi(BuildContext context, int orderId) async {
+    setQrLoading(true);
+    try {
+      final response = await RiderRepository.generatePaymentQr(orderId);
+      setQrLoading(false);
+      if (response['success'] == true) {
+        final Map<String, dynamic> data;
+        if (response['data'] is Map<String, dynamic>) {
+          data = response['data'] as Map<String, dynamic>;
+        } else {
+          data = response;
+        }
+        setQrData(data);
+        return data;
+      } else {
+        if (context.mounted) {
+          ToastMessage.cherryMessage(
+            context,
+            response['message'] ?? 'Failed to generate QR Code',
+            ToastType.error,
+          );
+        }
+        return null;
+      }
+    } catch (e) {
+      setQrLoading(false);
+      if (context.mounted) {
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
+      }
+      return null;
+    }
+  }
+
+  bool _paymentChecking = false;
+  bool get paymentChecking => _paymentChecking;
+
+  void setPaymentChecking(bool value) {
+    _paymentChecking = value;
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>?> checkPaymentStatusApi(BuildContext context, int orderId) async {
+    setPaymentChecking(true);
+    try {
+      final response = await RiderRepository.checkPaymentStatus(orderId);
+      setPaymentChecking(false);
+      return response;
+    } catch (e) {
+      setPaymentChecking(false);
+      if (context.mounted) {
+        ToastMessage.cherryMessage(
+          context,
+          e.toString(),
+          ToastType.error,
+        );
+      }
+      return null;
+    }
+  }
+
   // --- History API State ---
   bool _historyLoading = false;
   bool get historyLoading => _historyLoading;

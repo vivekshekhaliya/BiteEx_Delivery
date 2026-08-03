@@ -8,7 +8,9 @@ class OrderDetailsModel {
   factory OrderDetailsModel.fromJson(Map<String, dynamic> json) {
     return OrderDetailsModel(
       success: json['success'],
-      data: json['data'] != null ? OrderDetailsData.fromJson(json['data']) : null,
+      data: json['data'] != null
+          ? OrderDetailsData.fromJson(json['data'])
+          : null,
       message: json['message'],
     );
   }
@@ -26,6 +28,7 @@ class OrderDetailsData {
   String? deliveryInstructions;
   dynamic deliveryEarnings;
   String? paymentMethod;
+  String? paymentStatus;
   dynamic totalAmount;
 
   OrderDetailsData({
@@ -40,6 +43,7 @@ class OrderDetailsData {
     this.deliveryInstructions,
     this.deliveryEarnings,
     this.paymentMethod,
+    this.paymentStatus,
     this.totalAmount,
   });
 
@@ -49,7 +53,9 @@ class OrderDetailsData {
       orderNumber: json['order_number'],
       status: json['status'],
       date: json['date'],
-      customer: json['customer'] != null ? Customer.fromJson(json['customer']) : null,
+      customer: json['customer'] != null
+          ? Customer.fromJson(json['customer'])
+          : null,
       pickup: json['pickup'] != null ? Pickup.fromJson(json['pickup']) : null,
       drop: json['drop'] != null ? Drop.fromJson(json['drop']) : null,
       items: json['items'] != null
@@ -58,6 +64,7 @@ class OrderDetailsData {
       deliveryInstructions: json['delivery_instructions'],
       deliveryEarnings: json['delivery_earnings'],
       paymentMethod: json['payment_method'],
+      paymentStatus: json['payment_status']?.toString(),
       totalAmount: json['total_amount'],
     );
   }
@@ -105,8 +112,16 @@ class Drop {
   factory Drop.fromJson(Map<String, dynamic> json) {
     return Drop(
       address: json['address']?.toString() ?? json['drop_location']?.toString(),
-      latitude: json['latitude'] ?? json['drop_latitude'] ?? json['drop_lat'] ?? json['lat'],
-      longitude: json['longitude'] ?? json['drop_longitude'] ?? json['drop_lng'] ?? json['lng'],
+      latitude:
+          json['latitude'] ??
+          json['drop_latitude'] ??
+          json['drop_lat'] ??
+          json['lat'],
+      longitude:
+          json['longitude'] ??
+          json['drop_longitude'] ??
+          json['drop_lng'] ??
+          json['lng'],
     );
   }
 }
