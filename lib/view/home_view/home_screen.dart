@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../res/constants/app_colors.dart';
+import '../../res/components/shimmer_layouts.dart';
 import '../../view_model/rider_view_model.dart';
 import 'components/info_card.dart';
 
@@ -51,9 +52,50 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.secondaryColor,
-      body: riderVM.dashboardLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
+      body: (riderVM.dashboardLoading || riderVM.availableOrdersLoading)
+          ? SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const HeaderView(),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Container(
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppColors.darkGunmetalColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Container(
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppColors.darkGunmetalColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  const CustomText(
+                    data: 'Available Orders',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.whiteColor,
+                    padding: EdgeInsets.only(left: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  RequestCardShimmer(),
+                ],
+              ),
             )
           : SingleChildScrollView(
               child: Column(
@@ -97,6 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: AppColors.whiteColor,
                       padding: EdgeInsets.only(left: 16, top: 16),
                     ),
+                    SizedBox(height: 10),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

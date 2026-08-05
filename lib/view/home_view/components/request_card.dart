@@ -6,7 +6,6 @@ import 'package:bite_ex_delivery/view/order_details_view/order_details_screen.da
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:bite_ex_delivery/model/available_order_model.dart';
 import 'package:bite_ex_delivery/view_model/rider_view_model.dart';
 

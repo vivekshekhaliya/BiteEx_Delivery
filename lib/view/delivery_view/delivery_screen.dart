@@ -5,6 +5,7 @@ import 'package:dotted_line/dotted_line.dart';
 
 import '../../res/components/app_cached_network_image.dart';
 import '../../res/components/custom_text.dart';
+import '../../res/components/shimmer_layouts.dart';
 import '../../res/constants/app_colors.dart';
 import '../../view_model/rider_view_model.dart';
 import 'components/delivery_header.dart';
@@ -56,8 +57,11 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       ),
 
       body: riderVM.historyLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
+          ? ListView.builder(
+              itemCount: 3,
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+              itemBuilder: (context, index) => const HistoryCardShimmer(),
             )
           : historyList == null || historyList.isEmpty
           ? Center(
