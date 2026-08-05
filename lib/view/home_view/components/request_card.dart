@@ -1,15 +1,14 @@
 import 'package:bite_ex_delivery/res/components/app_cached_network_image.dart';
+import 'package:bite_ex_delivery/res/components/custom_app_button.dart';
 import 'package:bite_ex_delivery/res/components/custom_text.dart';
 import 'package:bite_ex_delivery/res/constants/app_colors.dart';
 import 'package:bite_ex_delivery/view/order_details_view/order_details_screen.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:bite_ex_delivery/model/available_order_model.dart';
 import 'package:bite_ex_delivery/view_model/rider_view_model.dart';
-import 'package:bite_ex_delivery/view/map_view/map_screen.dart';
 
 class RequestCard extends StatefulWidget {
   final AvailableOrder? order;
@@ -23,12 +22,12 @@ class RequestCard extends StatefulWidget {
 class _RequestCardState extends State<RequestCard> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.darkGunmetalColor,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.slateGrayColor.withAlpha(80)),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -41,333 +40,465 @@ class _RequestCardState extends State<RequestCard> {
             ),
           );
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.all(12),
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.darkGunmetalColor,
-                border: Border.all(color: AppColors.jetGrayColor),
-                borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Badges Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // New Request Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF132F20),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF1DA15B),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        CustomText(
+                          data: "New Request",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1DA15B),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Preparing Badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2C2415),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.access_time_filled_rounded,
+                          color: AppColors.orangeColor,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 6),
+                        CustomText(
+                          data: widget.order?.status ?? "",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.orangeColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              child: Column(
+
+              // Divider
+              const SizedBox(height: 18),
+              const DottedLine(
+                direction: Axis.horizontal,
+                dashLength: 4,
+                dashGapLength: 3,
+                lineThickness: 1.0,
+                dashColor: AppColors.slateGrayColor,
+              ),
+              const SizedBox(height: 18),
+
+              // Timeline Address Section
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Column(
                     children: [
                       Container(
-                        height: 32,
-                        width: 32,
+                        width: 36,
+                        height: 36,
                         decoration: BoxDecoration(
-                          color: AppColors.mintGreenColor,
-                          borderRadius: BorderRadius.circular(100),
+                          color: AppColors.primaryColor.withAlpha(40),
+                          shape: BoxShape.circle,
                         ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/svg_icon/location_pin.svg',
-                            height: 18,
-                            width: 18,
+                        child: const Center(
+                          child: Icon(
+                            Icons.location_on_outlined,
+                            color: AppColors.primaryColor,
+                            size: 20,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          spacing: 4,
+                      const SizedBox(height: 4),
+                      const DottedLine(
+                        direction: Axis.vertical,
+                        lineLength: 30,
+                        dashLength: 3,
+                        dashGapLength: 3,
+                        lineThickness: 1.5,
+                        dashColor: AppColors.coolGrayColor,
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withAlpha(40),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.location_on_outlined,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomText(
-                              data: "Pickup :",
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.whiteColor,
+                            const CustomText(
+                              data: "Pickup",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
                             ),
+                            const SizedBox(height: 3),
                             CustomText(
-                              data:
-                                  widget.order?.pickupName ??
-                                  "BiteEx Restaurant",
+                              data: widget.order?.pickupName ?? "",
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: AppColors.whiteColor,
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(left: 14, bottom: 6, top: 6),
-                    child: DottedLine(
-                      direction: Axis.vertical,
-                      lineLength: 30,
-                      dashLength: 4,
-                      dashGapLength: 3,
-                      lineThickness: 2,
-                      dashColor: AppColors.whiteColor,
-                    ),
-                  ),
-
-                  Row(
-                    children: [
-                      Container(
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                          color: AppColors.mintGreenColor,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/svg_icon/location_pin.svg',
-                            height: 18,
-                            width: 18,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          spacing: 4,
+                        const SizedBox(height: 24),
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const CustomText(
+                              data: "Drop",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                            const SizedBox(height: 3),
                             CustomText(
-                              data: "Drop :",
-                              fontSize: 14,
+                              data: widget.order?.dropLocation ?? "",
+                              fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: AppColors.whiteColor,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                final lat = widget.order?.latitude ?? 23.050473;
-                                final lng =
-                                    widget.order?.longitude ?? 72.533682;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MapScreen(
-                                      latitude: lat,
-                                      longitude: lng,
-                                      address:
-                                          widget.order?.dropLocation ??
-                                          "Ahmedabad University",
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: CustomText(
-                                data:
-                                    widget.order?.dropLocation ??
-                                    "Ahmedabad University",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.blueColor,
-                                decoration: TextDecoration.underline,
-                              ),
+                              maxLines: 3,
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Divider(
-                height: 1,
-                thickness: 0.6,
-                color: AppColors.darkSlateGrayColor,
+              const SizedBox(height: 18),
+
+              // Divider
+              const DottedLine(
+                direction: Axis.horizontal,
+                dashLength: 4,
+                dashGapLength: 3,
+                lineThickness: 1.0,
+                dashColor: AppColors.slateGrayColor,
               ),
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                CustomText(
-                  data: widget.order != null
-                      ? '₹${widget.order!.deliveryEarnings}'
-                      : '₹25.00',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.lightBlueGrayColor,
-                  padding: EdgeInsets.only(left: 12),
-                ),
-                SizedBox(width: 10),
-                CustomText(
-                  data: '•',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.darkSlateGrayColor,
-                ),
-                SizedBox(width: 10),
-                CustomText(
-                  data: widget.order?.date ?? '07 Feb, 9:10 PM',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.lightBlueGrayColor,
-                ),
-                Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  margin: EdgeInsets.only(right: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: AppColors.orangeColor.withAlpha(40),
-                  ),
-                  child: CustomText(
-                    data: widget.order?.status ?? 'In Process',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.orangeColor,
-                  ),
-                ),
-              ],
-            ),
-            CustomText(
-              data: widget.order?.orderNumber ?? '#ORDER-17',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.lightBlueGrayColor,
-              padding: EdgeInsets.only(left: 12, top: 4),
-            ),
-            if (widget.order?.productImages != null &&
-                widget.order!.productImages!.isNotEmpty)
-              SizedBox(
-                height: 70,
-                child: ListView.builder(
-                  itemCount: widget.order!.productImages!.length,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 12, top: 12, bottom: 16),
-                  scrollDirection: Axis.horizontal,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: AppCachedNetworkImage(
-                        imageUrl: widget.order!.productImages![index],
-                        height: 44,
-                        width: 44,
-                        borderRadius: BorderRadius.circular(4),
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                ),
-              )
-            else
-              SizedBox(
-                height: 70,
-                child: ListView.builder(
-                  itemCount: 4,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(left: 12, top: 12, bottom: 16),
-                  scrollDirection: Axis.horizontal,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: AppCachedNetworkImage(
-                        imageUrl:
-                            'https://images.pexels.com/photos/9001223/pexels-photo-9001223.jpeg',
-                        height: 44,
-                        width: 44,
-                        borderRadius: BorderRadius.circular(4),
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            if (widget.order?.status == 'In Process' ||
-                widget.order?.status?.toLowerCase() == 'preparing' ||
-                widget.order?.status?.toLowerCase() == 'in_process' ||
-                widget.order?.status?.toLowerCase() == 'pending') ...[
-              Divider(
-                height: 0,
-                thickness: 0.6,
-                color: AppColors.darkSlateGrayColor,
-              ),
+              const SizedBox(height: 16),
+
+              // Split Info Row (Earnings, Date, Time)
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed:
-                        (widget.order == null ||
-                            Provider.of<RiderViewModel>(context).actionLoading)
-                        ? null
-                        : () {
-                            Provider.of<RiderViewModel>(
-                              context,
-                              listen: false,
-                            ).rejectOrderApi(context, widget.order!.orderId!);
-                          },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: AppColors.darkGunmetalColor,
-                      disabledBackgroundColor: AppColors.darkGunmetalColor,
-                      fixedSize: Size(size.width / 2.2, 46),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(16),
+                  // Earnings Column
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withAlpha(40),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: CustomText(
+                              data: "₹",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    child: CustomText(
-                      data: 'Cancel',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.whiteColor,
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                data: widget.order != null
+                                    ? '₹${widget.order!.deliveryEarnings}'
+                                    : '',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.whiteColor,
+                              ),
+                              const SizedBox(height: 2),
+                              const CustomText(
+                                data: "Earnings",
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.coolGrayColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
-                    height: 46,
-                    width: 0.6,
+                    width: 1,
+                    height: 36,
                     color: AppColors.darkSlateGrayColor,
                   ),
-                  ElevatedButton(
-                    onPressed:
-                        (widget.order == null ||
-                            Provider.of<RiderViewModel>(context).actionLoading)
-                        ? null
-                        : () {
-                            Provider.of<RiderViewModel>(
-                              context,
-                              listen: false,
-                            ).acceptOrderApi(context, widget.order!.orderId!);
-                          },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: AppColors.darkGunmetalColor,
-                      disabledBackgroundColor: AppColors.darkGunmetalColor,
-                      fixedSize: Size(size.width / 2.2, 46),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(16),
-                        ),
-                      ),
-                    ),
-                    child: Provider.of<RiderViewModel>(context).actionLoading
-                        ? Center(
-                            child:
-                                LoadingAnimationWidget.horizontalRotatingDots(
-                                  color: AppColors.primaryColor,
-                                  size: 30,
-                                ),
-                          )
-                        : CustomText(
-                            data: 'Accept',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primaryColor,
+                  // Date Column
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withAlpha(40),
+                            shape: BoxShape.circle,
                           ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.calendar_today_outlined,
+                              color: AppColors.primaryColor,
+                              size: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                data:
+                                    widget.order?.date?.split(',')[0].trim() ??
+                                    "",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.whiteColor,
+                              ),
+                              const SizedBox(height: 2),
+                              const CustomText(
+                                data: "Date",
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.coolGrayColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 36,
+                    color: AppColors.darkSlateGrayColor,
+                  ),
+                  // Time Column
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withAlpha(40),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.access_time_rounded,
+                              color: AppColors.primaryColor,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                data:
+                                    (widget.order?.date != null &&
+                                        widget.order!.date!.contains(','))
+                                    ? widget.order!.date!.split(',')[1].trim()
+                                    : "",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.whiteColor,
+                              ),
+                              const SizedBox(height: 2),
+                              const CustomText(
+                                data: "Time",
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.coolGrayColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Nested order details box
+              const DottedLine(
+                direction: Axis.horizontal,
+                dashLength: 4,
+                dashGapLength: 3,
+                lineThickness: 1.0,
+                dashColor: AppColors.slateGrayColor,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: AppCachedNetworkImage(
+                      imageUrl:
+                          (widget.order?.productImages != null &&
+                              widget.order!.productImages!.isNotEmpty)
+                          ? widget.order!.productImages![0]
+                          : 'https://images.pexels.com/photos/9001223/pexels-photo-9001223.jpeg',
+                      height: 52,
+                      width: 52,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          data:
+                              widget.order?.orderNumber?.startsWith('#') == true
+                              ? (widget.order?.orderNumber ?? '')
+                              : '#${widget.order?.orderNumber ?? ''}',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.whiteColor,
+                        ),
+                        const SizedBox(height: 4),
+                        CustomText(
+                          data:
+                              '${widget.order?.itemsCount ?? 1} Item  •  ${widget.order?.category ?? ''}',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.coolGrayColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Accept / Cancel action buttons row
+              const DottedLine(
+                direction: Axis.horizontal,
+                dashLength: 4,
+                dashGapLength: 3,
+                lineThickness: 1.0,
+                dashColor: AppColors.slateGrayColor,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: CustomAppButton(
+                      text: 'Cancel',
+                      height: 44,
+                      borderRadius: BorderRadius.circular(10),
+                      backgroundColor: AppColors.slateGrayColor,
+                      onPressed:
+                          (widget.order == null ||
+                              Provider.of<RiderViewModel>(
+                                context,
+                              ).actionLoading)
+                          ? null
+                          : () {
+                              Provider.of<RiderViewModel>(
+                                context,
+                                listen: false,
+                              ).rejectOrderApi(context, widget.order!.orderId!);
+                            },
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: CustomAppButton(
+                      text: 'Accept',
+                      height: 44,
+                      borderRadius: BorderRadius.circular(10),
+                      isLoading: Provider.of<RiderViewModel>(
+                        context,
+                      ).actionLoading,
+                      onPressed:
+                          (widget.order == null ||
+                              Provider.of<RiderViewModel>(
+                                context,
+                              ).actionLoading)
+                          ? null
+                          : () {
+                              Provider.of<RiderViewModel>(
+                                context,
+                                listen: false,
+                              ).acceptOrderApi(context, widget.order!.orderId!);
+                            },
+                    ),
                   ),
                 ],
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

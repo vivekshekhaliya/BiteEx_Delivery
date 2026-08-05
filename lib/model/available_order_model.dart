@@ -28,6 +28,9 @@ class AvailableOrder {
   List<String>? productImages;
   double? latitude;
   double? longitude;
+  String? productName;
+  String? category;
+  int? itemsCount;
 
   AvailableOrder({
     this.orderId,
@@ -41,6 +44,9 @@ class AvailableOrder {
     this.productImages,
     this.latitude,
     this.longitude,
+    this.productName,
+    this.category,
+    this.itemsCount,
   });
 
   factory AvailableOrder.fromJson(Map<String, dynamic> json) {
@@ -72,6 +78,34 @@ class AvailableOrder {
       }
     }
 
+    String? pName = json['product_name']?.toString() ?? 
+                    json['item_name']?.toString() ?? 
+                    json['first_item_name']?.toString() ??
+                    json['product_names']?.toString();
+                    
+    String? cat = json['category']?.toString() ?? 
+                  json['category_name']?.toString() ?? 
+                  json['product_category']?.toString();
+                  
+    int? count = json['items_count'] ?? 
+                 json['total_items'] ?? 
+                 json['quantity'] ?? 
+                 json['product_count'];
+
+    if (json['items'] != null && json['items'] is List) {
+      final List itemsList = json['items'] as List;
+      if (itemsList.isNotEmpty) {
+        final firstItem = itemsList.first;
+        if (firstItem is Map) {
+          pName ??= firstItem['product_name']?.toString() ?? firstItem['item_name']?.toString();
+          cat ??= firstItem['category']?.toString() ?? firstItem['category_name']?.toString();
+        }
+        count ??= itemsList.length;
+      }
+    }
+
+    cat ??= "Beverage";
+
     return AvailableOrder(
       orderId: json['order_id'],
       orderNumber: json['order_number'],
@@ -86,6 +120,9 @@ class AvailableOrder {
           : null,
       latitude: lat,
       longitude: lng,
+      productName: pName,
+      category: cat,
+      itemsCount: count,
     );
   }
 }
