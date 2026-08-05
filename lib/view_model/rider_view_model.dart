@@ -1,5 +1,9 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:glowing_avatar/glowing_avatar.dart';
+import '../res/components/custom_app_button.dart';
+import '../res/components/custom_text.dart';
+import '../res/constants/app_colors.dart';
 import '../res/constants/toast_message.dart';
 
 import '../model/available_order_model.dart';
@@ -39,7 +43,7 @@ class RiderViewModel with ChangeNotifier {
     final currentDelivery = data?.data?.currentDelivery;
     if (currentDelivery != null &&
         (currentDelivery.status?.toLowerCase() == 'on the way' ||
-         currentDelivery.status?.toLowerCase() == 'on_the_way')) {
+            currentDelivery.status?.toLowerCase() == 'on_the_way')) {
       RiderLocationTracker().startTracking(currentDelivery.orderId);
     } else {
       RiderLocationTracker().stopTracking();
@@ -55,11 +59,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setDashboardLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
     }
   }
@@ -90,11 +90,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setAvailableOrdersLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
     }
   }
@@ -125,11 +121,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setOrderDetailsLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
     }
   }
@@ -159,7 +151,10 @@ class RiderViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>?> generatePaymentQrApi(BuildContext context, int orderId) async {
+  Future<Map<String, dynamic>?> generatePaymentQrApi(
+    BuildContext context,
+    int orderId,
+  ) async {
     setQrLoading(true);
     try {
       final response = await RiderRepository.generatePaymentQr(orderId);
@@ -186,11 +181,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setQrLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return null;
     }
@@ -204,7 +195,10 @@ class RiderViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>?> checkPaymentStatusApi(BuildContext context, int orderId) async {
+  Future<Map<String, dynamic>?> checkPaymentStatusApi(
+    BuildContext context,
+    int orderId,
+  ) async {
     setPaymentChecking(true);
     try {
       final response = await RiderRepository.checkPaymentStatus(orderId);
@@ -213,11 +207,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setPaymentChecking(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return null;
     }
@@ -249,11 +239,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setHistoryLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
     }
   }
@@ -267,28 +253,9 @@ class RiderViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> acceptOrderApi(BuildContext context, int orderId, {double? pickupLat, double? pickupLng}) async {
+  Future<bool> acceptOrderApi(BuildContext context, int orderId) async {
     setActionLoading(true);
     try {
-      // Enforce 80-meter radius restriction relative to outlet premises
-      final locationResult = await LocationService.checkOutletRadius(
-        radiusInMeters: 80.0,
-        targetLat: pickupLat,
-        targetLng: pickupLng,
-      );
-
-      if (!locationResult.allowed) {
-        setActionLoading(false);
-        if (context.mounted) {
-          ToastMessage.cherryMessage(
-            context,
-            locationResult.message ?? 'You must be within an 80-meter radius of the outlet premises to accept orders.',
-            ToastType.error,
-          );
-        }
-        return false;
-      }
-
       final response = await RiderRepository.acceptOrder(orderId);
       setActionLoading(false);
       if (context.mounted) {
@@ -304,11 +271,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return false;
     }
@@ -332,22 +295,37 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return false;
     }
   }
 
-  Future<bool> startDeliveryApi(BuildContext context, int orderId) async {
+  Future<bool> startDeliveryApi(
+    BuildContext context,
+    int orderId, {
+    double? pickupLat,
+    double? pickupLng,
+  }) async {
     setActionLoading(true);
     try {
+      // Enforce 100-meter radius restriction relative to outlet premises
+      final locationResult = await LocationService.checkOutletRadius(
+        radiusInMeters: 100.0,
+        targetLat: pickupLat,
+        targetLng: pickupLng,
+      );
+
+      if (!locationResult.allowed) {
+        setActionLoading(false);
+        if (context.mounted) {
+          showGpsDisabledDialog(context);
+        }
+        return false;
+      }
       final response = await RiderRepository.startDelivery(orderId);
       setActionLoading(false);
-      
+
       // Start 30-second periodic location tracking for the active delivery
       RiderLocationTracker().startTracking(orderId);
 
@@ -363,20 +341,89 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return false;
     }
   }
 
-  Future<bool> completeDeliveryApi(BuildContext context, int orderId, {required String otp}) async {
+  void showGpsDisabledDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        final size = MediaQuery.of(context).size;
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Container(
+            width: size.width,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.jetGrayColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 90,
+                  child: GlowingAvatar(
+                    size: 50,
+                    content: AvatarContent.icon(Icons.location_off_rounded),
+                    shape: AvatarShape.circle,
+                    backgroundColor: AppColors.crimsonRedColor,
+                    glowConfig: GlowPresets.alertRed,
+                    animationConfig: AnimationPresets.zen,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                const CustomText(
+                  data: "You're Not at the Outlet",
+                  fontSize: 18,
+                  color: AppColors.whiteColor,
+                  fontWeight: FontWeight.w700,
+                ),
+
+                const SizedBox(height: 10),
+
+                const CustomText(
+                  data:
+                      "Delivery can only be started when you're at the outlet location. Please reach the outlet and try again.",
+                  fontSize: 15,
+                  textAlign: TextAlign.center,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.lightBlueGrayColor,
+                ),
+
+                const SizedBox(height: 24),
+
+                CustomAppButton(
+                  text: 'Close!',
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<bool> completeDeliveryApi(
+    BuildContext context,
+    int orderId, {
+    required String otp,
+  }) async {
     setActionLoading(true);
     try {
-      final response = await RiderRepository.completeDelivery(orderId, otp: otp);
+      final response = await RiderRepository.completeDelivery(
+        orderId,
+        otp: otp,
+      );
       setActionLoading(false);
 
       // Stop periodic location tracking upon delivery completion
@@ -395,11 +442,7 @@ class RiderViewModel with ChangeNotifier {
     } catch (e) {
       setActionLoading(false);
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return false;
     }
@@ -413,18 +456,15 @@ class RiderViewModel with ChangeNotifier {
       if (context.mounted) {
         ToastMessage.cherryMessage(
           context,
-          response['message'] ?? 'Rider is now ${status ? "Online" : "Offline"}',
+          response['message'] ??
+              'Rider is now ${status ? "Online" : "Offline"}',
           ToastType.success,
         );
       }
       return true;
     } catch (e) {
       if (context.mounted) {
-        ToastMessage.cherryMessage(
-          context,
-          e.toString(),
-          ToastType.error,
-        );
+        ToastMessage.cherryMessage(context, e.toString(), ToastType.error);
       }
       return false;
     }

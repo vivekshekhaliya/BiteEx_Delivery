@@ -6,6 +6,8 @@ import '../../res/components/custom_text.dart';
 import '../../res/constants/app_colors.dart';
 import '../../res/routes/routes_name.dart';
 import '../../view_model/auth_view_model.dart';
+import '../web_view/web_view_screen.dart';
+import 'components/confirmation_dialog.dart';
 import 'components/menu_item.dart';
 import 'components/user_profile_image.dart';
 
@@ -17,54 +19,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.darkGunmetalColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const CustomText(
-          data: "Logout",
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-        content: const CustomText(
-          data: "Are you sure you want to log out?",
-          fontSize: 14,
-          color: AppColors.lightBlueGrayColor,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const CustomText(
-              data: "Cancel",
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.lightBlueGrayColor,
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              final authViewModel = Provider.of<AuthViewModel>(
-                context,
-                listen: false,
-              );
-              authViewModel.logout(context);
-            },
-            child: const CustomText(
-              data: "Logout",
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.redAccent,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -132,26 +86,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 MenuItem(
                   assetName: 'assets/svg_icon/terms_condition_icon.svg',
                   title: "Terms & Conditions",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebViewScreen(
+                          title: 'Terms & Conditions',
+                          url:
+                              'https://site.biteexchange.com/terms_&_condition.html',
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 _divider(),
                 MenuItem(
                   assetName: 'assets/svg_icon/privacy_policy_icon.svg',
                   title: "Privacy Policy",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebViewScreen(
+                          title: 'Privacy Policy',
+                          url:
+                              'https://site.biteexchange.com/privacy_policy.html',
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 _divider(),
                 MenuItem(
                   assetName: 'assets/svg_icon/info_circle_icon.svg',
                   title: "Help & Support",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, RoutesName.helpSupportScreen);
+                  },
                 ),
-                // _divider(),
-                // MenuItem(
-                //   assetName: 'assets/svg_icon/delete_icon.svg',
-                //   title: "Delete Account",
-                //   onTap: () {},
-                // ),
               ],
             ),
           ),
@@ -167,7 +139,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: MenuItem(
               assetName: 'assets/svg_icon/logout_icon.svg',
               title: "Logout",
-              onTap: () => _showLogoutDialog(context),
+
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialog(
+                    label: 'Logout',
+                    assetName: 'assets/svg_icon/logout_icon.svg',
+                    description:
+                        'Are you sure you want to logout\nyour account?',
+                    onCallBack: () async {
+                      final authViewModel = Provider.of<AuthViewModel>(
+                        context,
+                        listen: false,
+                      );
+                      authViewModel.logout(context);
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ],

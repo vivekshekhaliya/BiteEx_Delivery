@@ -133,9 +133,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               orderId: order.orderId!,
                               amount:
                                   double.tryParse(
-                                        order.totalAmount?.toString() ?? '0',
-                                      ) ??
-                                      0.0,
+                                    order.totalAmount?.toString() ?? '0',
+                                  ) ??
+                                  0.0,
                             ),
                           );
                         },
@@ -159,7 +159,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryColor.withOpacity(0.12),
+                                  color: AppColors.primaryColor.withOpacity(
+                                    0.12,
+                                  ),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -340,9 +342,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               : () async {
                                   if (order.orderId != null) {
                                     final otp =
-                                        _otpController.text
-                                            .trim()
-                                            .isNotEmpty
+                                        _otpController.text.trim().isNotEmpty
                                         ? _otpController.text.trim()
                                         : '1234';
                                     final success = await riderVM

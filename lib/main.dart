@@ -192,7 +192,7 @@ class _MyAppState extends State<MyApp> {
             right: 40,
             bottom: 40,
           ),
-          backgroundColor: AppColors.whiteColor,
+          backgroundColor: AppColors.jetGrayColor,
           actionsPadding: const EdgeInsets.all(20),
           shape: ContinuousRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -213,7 +213,7 @@ class _MyAppState extends State<MyApp> {
           ),
           content: const CustomText(
             data: 'No Internet connection found.\nCheck your connection.',
-            color: AppColors.blackColor,
+            color: AppColors.whiteColor,
             fontSize: 14,
             fontWeight: FontWeight.w400,
             textAlign: TextAlign.center,

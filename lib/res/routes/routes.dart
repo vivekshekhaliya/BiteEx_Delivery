@@ -1,11 +1,4 @@
 import 'package:bite_ex_delivery/res/routes/screen_export.dart';
-import 'package:bite_ex_delivery/view/sign_in_view/sign_in_screen.dart';
-
-import '../../view/about_view/about_screen.dart';
-import '../../view/bottom_navigation_bar_view/bottom_navigation_bar_screen.dart';
-import '../../view/error_view/route_error_screen.dart';
-import '../../view/faq_view/faq_screen.dart';
-import '../../view/splash_view/splash_screen.dart';
 
 /// This class manages app-wide route generation for navigation.
 class Routes {
@@ -23,6 +16,10 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const FaqScreen());
       case RoutesName.aboutScreen:
         return MaterialPageRoute(builder: (context) => const AboutScreen());
+      case RoutesName.helpSupportScreen:
+        return MaterialPageRoute(
+          builder: (context) => const HelpSupportScreen(),
+        );
       case RoutesName.routeError:
         return MaterialPageRoute(
           builder: (context) => RouteErrorScreen(routeName: settings.name),

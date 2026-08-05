@@ -1,3 +1,10 @@
 export 'package:flutter/material.dart';
 export 'package:bite_ex_delivery/res/routes/routes_name.dart';
 export 'package:bite_ex_delivery/res/routes/screen_export.dart';
+export 'package:bite_ex_delivery/view/sign_in_view/sign_in_screen.dart';
+export '../../view/about_view/about_screen.dart';
+export '../../view/bottom_navigation_bar_view/bottom_navigation_bar_screen.dart';
+export '../../view/error_view/route_error_screen.dart';
+export '../../view/faq_view/faq_screen.dart';
+export '../../view/help_support_view/help_support_screen.dart';
+export '../../view/splash_view/splash_screen.dart';
