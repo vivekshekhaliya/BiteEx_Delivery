@@ -27,6 +27,8 @@ class HistoryOrder {
   String? date;
   dynamic deliveryEarnings;
   List<String>? productImages;
+  String? productName;
+  int? itemsCount;
 
   HistoryOrder({
     this.orderId,
@@ -38,9 +40,32 @@ class HistoryOrder {
     this.date,
     this.deliveryEarnings,
     this.productImages,
+    this.productName,
+    this.itemsCount,
   });
 
   factory HistoryOrder.fromJson(Map<String, dynamic> json) {
+    String? pName = json['product_name']?.toString() ?? 
+                    json['item_name']?.toString() ?? 
+                    json['first_item_name']?.toString() ??
+                    json['product_names']?.toString();
+                    
+    int? count = json['items_count'] ?? 
+                 json['total_items'] ?? 
+                 json['quantity'] ?? 
+                 json['product_count'];
+
+    if (json['items'] != null && json['items'] is List) {
+      final List itemsList = json['items'] as List;
+      if (itemsList.isNotEmpty) {
+        final firstItem = itemsList.first;
+        if (firstItem is Map) {
+          pName ??= firstItem['product_name']?.toString() ?? firstItem['item_name']?.toString();
+        }
+        count ??= itemsList.length;
+      }
+    }
+
     return HistoryOrder(
       orderId: json['order_id'] ?? json['id'],
       orderNumber: json['order_number']?.toString() ?? json['order_id']?.toString() ?? json['id']?.toString(),
@@ -55,6 +80,8 @@ class HistoryOrder {
           : json['images'] != null
               ? List<String>.from(json['images'])
               : null,
+      productName: pName,
+      itemsCount: count,
     );
   }
 }
