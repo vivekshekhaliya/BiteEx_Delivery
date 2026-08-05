@@ -56,7 +56,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
         backgroundColor: AppColors.secondaryColor,
       ),
 
-      body: riderVM.historyLoading
+      body: riderVM.historyLoading && (historyList == null || historyList.isEmpty)
           ? ListView.builder(
               itemCount: 3,
               shrinkWrap: true,

@@ -42,125 +42,131 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: AppColors.secondaryColor,
       ),
 
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20),
-          UserProfileImage(),
-          SizedBox(height: 30),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 20),
+            UserProfileImage(),
+            SizedBox(height: 30),
 
-          CustomText(
-            data: "About",
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: AppColors.lightBlueGrayColor,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-          ),
-          SizedBox(height: 12),
-
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: AppColors.darkGunmetalColor,
+            CustomText(
+              data: "About",
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.lightBlueGrayColor,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
             ),
-            child: Column(
-              children: [
-                MenuItem(
-                  assetName: 'assets/svg_icon/about_icon.svg',
-                  title: "About",
-                  onTap: () {
-                    Navigator.pushNamed(context, RoutesName.aboutScreen);
-                  },
-                ),
-                _divider(),
-                MenuItem(
-                  assetName: 'assets/svg_icon/faq_icon.svg',
-                  title: "FAQs",
-                  onTap: () {
-                    Navigator.pushNamed(context, RoutesName.faqScreen);
-                  },
-                ),
-                _divider(),
-                MenuItem(
-                  assetName: 'assets/svg_icon/terms_condition_icon.svg',
-                  title: "Terms & Conditions",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WebViewScreen(
-                          title: 'Terms & Conditions',
-                          url:
-                              'https://site.biteexchange.com/terms_&_condition.html',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _divider(),
-                MenuItem(
-                  assetName: 'assets/svg_icon/privacy_policy_icon.svg',
-                  title: "Privacy Policy",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WebViewScreen(
-                          title: 'Privacy Policy',
-                          url:
-                              'https://site.biteexchange.com/privacy_policy.html',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _divider(),
-                MenuItem(
-                  assetName: 'assets/svg_icon/info_circle_icon.svg',
-                  title: "Help & Support",
-                  onTap: () {
-                    Navigator.pushNamed(context, RoutesName.helpSupportScreen);
-                  },
-                ),
-              ],
-            ),
-          ),
+            SizedBox(height: 12),
 
-          SizedBox(height: 20),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: AppColors.darkGunmetalColor,
-            ),
-            child: MenuItem(
-              assetName: 'assets/svg_icon/logout_icon.svg',
-              title: "Logout",
-
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    label: 'Logout',
-                    assetName: 'assets/svg_icon/logout_icon.svg',
-                    description:
-                        'Are you sure you want to logout\nyour account?',
-                    onCallBack: () async {
-                      final authViewModel = Provider.of<AuthViewModel>(
-                        context,
-                        listen: false,
-                      );
-                      authViewModel.logout(context);
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: AppColors.darkGunmetalColor,
+              ),
+              child: Column(
+                children: [
+                  MenuItem(
+                    assetName: 'assets/svg_icon/about_icon.svg',
+                    title: "About",
+                    onTap: () {
+                      Navigator.pushNamed(context, RoutesName.aboutScreen);
                     },
                   ),
-                );
-              },
+                  _divider(),
+                  MenuItem(
+                    assetName: 'assets/svg_icon/faq_icon.svg',
+                    title: "FAQs",
+                    onTap: () {
+                      Navigator.pushNamed(context, RoutesName.faqScreen);
+                    },
+                  ),
+                  _divider(),
+                  MenuItem(
+                    assetName: 'assets/svg_icon/terms_condition_icon.svg',
+                    title: "Terms & Conditions",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WebViewScreen(
+                            title: 'Terms & Conditions',
+                            url:
+                                'https://site.biteexchange.com/terms_&_condition.html',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _divider(),
+                  MenuItem(
+                    assetName: 'assets/svg_icon/privacy_policy_icon.svg',
+                    title: "Privacy Policy",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WebViewScreen(
+                            title: 'Privacy Policy',
+                            url:
+                                'https://site.biteexchange.com/privacy_policy.html',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _divider(),
+                  MenuItem(
+                    assetName: 'assets/svg_icon/info_circle_icon.svg',
+                    title: "Help & Support",
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        RoutesName.helpSupportScreen,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+
+            SizedBox(height: 20),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: AppColors.darkGunmetalColor,
+              ),
+              child: MenuItem(
+                assetName: 'assets/svg_icon/logout_icon.svg',
+                title: "Logout",
+
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => ConfirmationDialog(
+                      label: 'Logout',
+                      assetName: 'assets/svg_icon/logout_icon.svg',
+                      description:
+                          'Are you sure you want to logout\nyour account?',
+                      onCallBack: () async {
+                        final authViewModel = Provider.of<AuthViewModel>(
+                          context,
+                          listen: false,
+                        );
+                        authViewModel.logout(context);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

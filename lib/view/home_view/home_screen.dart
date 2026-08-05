@@ -50,15 +50,22 @@ class _HomeScreenState extends State<HomeScreen> {
         riderVM.dashboardData?.data?.totalDeliveredOrders ?? 0;
     final currentDelivery = riderVM.dashboardData?.data?.currentDelivery;
 
+    final showShimmer =
+        (riderVM.dashboardLoading && riderVM.dashboardData == null) ||
+        (riderVM.availableOrdersLoading && riderVM.availableOrdersData == null);
+
     return Scaffold(
       backgroundColor: AppColors.secondaryColor,
-      body: (riderVM.dashboardLoading || riderVM.availableOrdersLoading)
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: AppColors.secondaryColor,
+        title: const HeaderView(),
+      ),
+      body: showShimmer
           ? SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const HeaderView(),
-                  const SizedBox(height: 16),
                   Row(
                     children: [
                       const SizedBox(width: 16),
@@ -101,9 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HeaderView(),
-
-                  SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       SizedBox(width: 16),
@@ -127,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: AppColors.whiteColor,
                       padding: EdgeInsets.only(left: 16, top: 16),
                     ),
+                    const SizedBox(height: 10),
                     RequestCard(order: currentDelivery),
                   ],
 
@@ -150,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return RequestCard(order: order);
                       },
                     ),
+                    const SizedBox(height: 30),
                   ],
 
                   if (currentDelivery == null &&

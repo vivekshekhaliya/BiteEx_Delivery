@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -14,18 +13,21 @@ class HeaderView extends StatefulWidget {
 }
 
 class _HeaderViewState extends State<HeaderView> {
+  String get greeting {
+    final hour = DateTime.now().hour;
+
+    if (hour >= 5 && hour < 12) return "Good Morning";
+    if (hour >= 12 && hour < 17) return "Good Afternoon";
+    if (hour >= 17 && hour < 21) return "Good Evening";
+    return "Good Evening";
+  }
+
   @override
   Widget build(BuildContext context) {
-    final insets = MediaQuery.of(context).padding;
     final riderVM = Provider.of<RiderViewModel>(context);
     final riderName = riderVM.dashboardData?.data?.riderName ?? "Rider";
 
     return Container(
-      margin: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: Platform.isIOS ? insets.top : insets.top + 10,
-      ),
       padding: EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
         color: AppColors.transparentColor,
@@ -53,9 +55,9 @@ class _HeaderViewState extends State<HeaderView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                data: "Good Evening,",
+                data: "$greeting,",
                 color: AppColors.whiteColor,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),
               CustomText(

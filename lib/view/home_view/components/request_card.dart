@@ -437,65 +437,71 @@ class _RequestCardState extends State<RequestCard> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Accept / Cancel action buttons row
-              const DottedLine(
-                direction: Axis.horizontal,
-                dashLength: 4,
-                dashGapLength: 3,
-                lineThickness: 1.0,
-                dashColor: AppColors.slateGrayColor,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: CustomAppButton(
-                      text: 'Cancel',
-                      height: 44,
-                      borderRadius: BorderRadius.circular(10),
-                      backgroundColor: AppColors.slateGrayColor,
-                      onPressed:
-                          (widget.order == null ||
-                              Provider.of<RiderViewModel>(
-                                context,
-                              ).actionLoading)
-                          ? null
-                          : () {
-                              Provider.of<RiderViewModel>(
-                                context,
-                                listen: false,
-                              ).rejectOrderApi(context, widget.order!.orderId!);
-                            },
+              if (widget.order?.status == 'Preparing') ...[
+                const SizedBox(height: 16),
+                const DottedLine(
+                  direction: Axis.horizontal,
+                  dashLength: 4,
+                  dashGapLength: 3,
+                  lineThickness: 1.0,
+                  dashColor: AppColors.slateGrayColor,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: CustomAppButton(
+                        text: 'Cancel',
+                        height: 44,
+                        borderRadius: BorderRadius.circular(10),
+                        backgroundColor: AppColors.slateGrayColor,
+                        onPressed:
+                            (widget.order == null ||
+                                Provider.of<RiderViewModel>(
+                                  context,
+                                ).actionLoading)
+                            ? null
+                            : () {
+                                Provider.of<RiderViewModel>(
+                                  context,
+                                  listen: false,
+                                ).rejectOrderApi(
+                                  context,
+                                  widget.order!.orderId!,
+                                );
+                              },
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: CustomAppButton(
-                      text: 'Accept',
-                      height: 44,
-                      borderRadius: BorderRadius.circular(10),
-                      isLoading: Provider.of<RiderViewModel>(
-                        context,
-                      ).actionLoading,
-                      onPressed:
-                          (widget.order == null ||
-                              Provider.of<RiderViewModel>(
-                                context,
-                              ).actionLoading)
-                          ? null
-                          : () {
-                              Provider.of<RiderViewModel>(
-                                context,
-                                listen: false,
-                              ).acceptOrderApi(context, widget.order!.orderId!);
-                            },
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: CustomAppButton(
+                        text: 'Accept',
+                        height: 44,
+                        borderRadius: BorderRadius.circular(10),
+                        isLoading: Provider.of<RiderViewModel>(
+                          context,
+                        ).actionLoading,
+                        onPressed:
+                            (widget.order == null ||
+                                Provider.of<RiderViewModel>(
+                                  context,
+                                ).actionLoading)
+                            ? null
+                            : () {
+                                Provider.of<RiderViewModel>(
+                                  context,
+                                  listen: false,
+                                ).acceptOrderApi(
+                                  context,
+                                  widget.order!.orderId!,
+                                );
+                              },
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
