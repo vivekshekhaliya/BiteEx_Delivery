@@ -12,10 +12,7 @@ class AuthRepository {
     try {
       Response response = await ApiClient.dio.post(
         AppUrl.signInUrl,
-        data: FormData.fromMap({
-          "mobile": number,
-          if (fcmToken != null) "device_token": fcmToken,
-        }),
+        data: FormData.fromMap({"mobile": number, "device_token": fcmToken}),
       );
 
       return response.data;
@@ -32,10 +29,7 @@ class AuthRepository {
     try {
       Response response = await ApiClient.dio.post(
         AppUrl.verifyUrl,
-        data: FormData.fromMap({
-          "mobile": number,
-          "otp": otp,
-        }),
+        data: FormData.fromMap({"mobile": number, "otp": otp}),
       );
 
       return response.data;

@@ -7,6 +7,7 @@ import 'package:new_version_plus/new_version_plus.dart';
 
 import '../../res/components/custom_text.dart';
 import '../../res/constants/app_colors.dart';
+import '../../services/notification_service.dart';
 import '../../services/web_socket_manager.dart';
 import '../../view_model/rider_view_model.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class BottomNavigationBarScreen extends StatefulWidget {
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
-  // final NotificationService _notificationService = NotificationService();
+  final NotificationService _notificationService = NotificationService();
   int _selectedIndex = 0;
   StreamSubscription? _socketSubscription;
 
@@ -60,8 +61,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   void initState() {
     super.initState();
     _listenToWebSocketEvents();
-    // _notificationService.initialize();
-    // _notificationService.onNotificationTap.stream.listen((data) {});
+    _notificationService.initialize();
+    _notificationService.onNotificationTap.stream.listen((data) {});
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await checkForUpdate(context);
     });
@@ -77,7 +78,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   void _listenToWebSocketEvents() {
     _socketSubscription = WebSocketManager().stream.listen((data) {
       if (data is Map) {
-        if (data['type'] == 'delivery_orders_updated' || data['channel'] == 'delivery-orders') {
+        if (data['type'] == 'delivery_orders_updated' ||
+            data['channel'] == 'delivery-orders') {
           if (mounted) {
             final riderVM = Provider.of<RiderViewModel>(context, listen: false);
             riderVM.getAvailableOrdersApi(context);

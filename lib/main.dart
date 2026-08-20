@@ -21,6 +21,7 @@ import 'view_model/auth_view_model.dart';
 import 'view_model/user_view_model.dart';
 import 'view_model/rider_view_model.dart';
 import 'data/network/api_client.dart';
+import 'services/notification_service.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -37,6 +38,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   ApiClient.init();
+
+  // Request notification permissions for Android and iOS
+  await NotificationService().initialize();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
