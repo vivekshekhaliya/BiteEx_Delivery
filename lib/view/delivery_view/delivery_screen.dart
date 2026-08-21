@@ -5,6 +5,7 @@ import 'package:dotted_line/dotted_line.dart';
 
 import '../../res/components/app_cached_network_image.dart';
 import '../../res/components/custom_text.dart';
+import '../../res/components/not_found.dart';
 import '../../res/components/shimmer_layouts.dart';
 import '../../res/constants/app_colors.dart';
 import '../../view_model/rider_view_model.dart';
@@ -56,7 +57,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
         backgroundColor: AppColors.secondaryColor,
       ),
 
-      body: riderVM.historyLoading && (historyList == null || historyList.isEmpty)
+      body:
+          riderVM.historyLoading && (historyList == null || historyList.isEmpty)
           ? ListView.builder(
               itemCount: 3,
               shrinkWrap: true,
@@ -65,12 +67,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             )
           : historyList == null || historyList.isEmpty
           ? Center(
-              child: CustomText(
-                data: "No delivery history found",
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.lightBlueGrayColor,
-              ),
+              child: NotFound(title: 'No delivery history found', height: 200),
             )
           : ListView.builder(
               itemCount: historyList.length,

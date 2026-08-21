@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:load_switch/load_switch.dart';
 import 'package:provider/provider.dart';
 import '../../../../res/components/custom_text.dart';
 import '../../../../res/constants/app_colors.dart';
 import '../../../../view_model/rider_view_model.dart';
 
 class HeaderView extends StatefulWidget {
-  const HeaderView({super.key});
+  final bool isOnline;
+  const HeaderView({super.key, required this.isOnline});
 
   @override
   State<HeaderView> createState() => _HeaderViewState();
 }
 
 class _HeaderViewState extends State<HeaderView> {
+  bool isOnline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isOnline = widget.isOnline;
+  }
+
+  @override
+  void didUpdateWidget(covariant HeaderView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isOnline != widget.isOnline) {
+      isOnline = widget.isOnline;
+    }
+  }
+
   String get greeting {
     final hour = DateTime.now().hour;
 
@@ -20,6 +38,20 @@ class _HeaderViewState extends State<HeaderView> {
     if (hour >= 12 && hour < 17) return "Good Afternoon";
     if (hour >= 17 && hour < 21) return "Good Evening";
     return "Good Evening";
+  }
+
+  Future<bool> _toggle() async {
+    final riderVM = Provider.of<RiderViewModel>(context, listen: false);
+
+    final newStatus = !isOnline;
+
+    try {
+      await riderVM.updateRiderStatusApi(context, newStatus);
+      return newStatus;
+    } catch (e) {
+      debugPrint('Status update failed: $e');
+      return isOnline;
+    }
   }
 
   @override
@@ -72,60 +104,62 @@ class _HeaderViewState extends State<HeaderView> {
           const Spacer(),
 
           // Rider Online / Offline ON-OFF Toggle Switch
-          // GestureDetector(
-          //   onTap: () async {
-          //     final newStatus = !riderVM.isOnline;
-          //     await riderVM.updateRiderStatusApi(context, newStatus);
-          //   },
-          //   child: AnimatedContainer(
-          //     duration: const Duration(milliseconds: 250),
-          //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          //     decoration: BoxDecoration(
-          //       color: riderVM.isOnline
-          //           ? AppColors.primaryColor.withAlpha(40)
-          //           : AppColors.crimsonRedColor.withAlpha(40),
-          //       borderRadius: BorderRadius.circular(20),
-          //       border: Border.all(
-          //         color: riderVM.isOnline
-          //             ? AppColors.primaryColor
-          //             : AppColors.crimsonRedColor,
-          //         width: 1.2,
-          //       ),
-          //     ),
-          //     child: Row(
-          //       mainAxisSize: MainAxisSize.min,
-          //       children: [
-          //         Container(
-          //           width: 8,
-          //           height: 8,
-          //           decoration: BoxDecoration(
-          //             shape: BoxShape.circle,
-          //             color: riderVM.isOnline
-          //                 ? AppColors.primaryColor
-          //                 : AppColors.crimsonRedColor,
-          //           ),
-          //         ),
-          //         const SizedBox(width: 6),
-          //         CustomText(
-          //           data: riderVM.isOnline ? 'ON' : 'OFF',
-          //           fontSize: 13,
-          //           fontWeight: FontWeight.w700,
-          //           color: riderVM.isOnline
-          //               ? AppColors.primaryColor
-          //               : AppColors.crimsonRedColor,
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          const SizedBox(width: 12),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            decoration: BoxDecoration(
+              color: isOnline
+                  ? AppColors.primaryColor.withAlpha(40)
+                  : AppColors.crimsonRedColor.withAlpha(40),
+              border: Border.all(
+                color: isOnline
+                    ? AppColors.primaryColor
+                    : AppColors.crimsonRedColor,
+                width: 0.4,
+              ),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width: 4),
+                SizedBox(
+                  width: 54,
+                  child: CustomText(
+                    data: isOnline ? 'Online' : 'Offline',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: isOnline
+                        ? AppColors.primaryColor
+                        : AppColors.crimsonRedColor,
+                  ),
+                ),
+                const SizedBox(width: 8),
 
-          IconButton(
-            padding: EdgeInsets.zero,
-            splashRadius: 24,
-            constraints: const BoxConstraints(),
-            onPressed: () {},
-            icon: SvgPicture.asset('assets/svg_icon/notification_icon.svg'),
+                SizedBox(
+                  width: 38,
+                  child: LoadSwitch.managed(
+                    value: isOnline,
+                    onToggle: _toggle,
+                    onChanged: (nextValue) {
+                      setState(() {
+                        isOnline = nextValue;
+                      });
+
+                      debugPrint(
+                        'Rider status: ${nextValue ? "Online" : "Offline"}',
+                      );
+                    },
+                    width: 36,
+                    height: 20,
+                    style: SpinStyle.fadingCircle,
+                    curveIn: Curves.easeInBack,
+                    curveOut: Curves.easeOutBack,
+                    switchAnimationDuration: const Duration(milliseconds: 500),
+                    spinnerAnimationDuration: const Duration(milliseconds: 900),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -34,10 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness:
-            Brightness.light, // Android: light icons (white)
-        statusBarBrightness:
-            Brightness.dark, // iOS: dark background = light (white) text
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: AppColors.secondaryColor,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
@@ -45,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final riderVM = Provider.of<RiderViewModel>(context);
     final isSalaried = riderVM.dashboardData?.data?.isSalaried ?? false;
+    final isOnline = riderVM.dashboardData?.data?.isOnline ?? false;
     final earnings = riderVM.dashboardData?.data?.totalEarnings ?? 0;
     final deliveredOrders =
         riderVM.dashboardData?.data?.totalDeliveredOrders ?? 0;
@@ -59,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.secondaryColor,
-        title: const HeaderView(),
+        title: HeaderView(isOnline: isOnline),
       ),
       body: showShimmer
           ? SingleChildScrollView(
@@ -164,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           riderVM.availableOrdersData!.data!.isEmpty)) ...[
                     NotFound(
                       title: 'No active or available orders',
-                      height: 180,
+                      height: 150,
                     ),
                   ],
                 ],

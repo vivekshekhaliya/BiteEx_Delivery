@@ -11,12 +11,13 @@ import 'package:flutter_new_badger/flutter_new_badger.dart';
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final StreamController<Map<String, dynamic>> onNotificationTap =
-  StreamController.broadcast();
+      StreamController.broadcast();
 
   Future<String?> getToken() async {
     try {
       return await _firebaseMessaging.getToken();
     } catch (e) {
+      debugPrint('Error getting FCM token: $e');
       return null;
     }
   }
@@ -70,11 +71,11 @@ class NotificationService {
           notificationDetails: NotificationDetails(
             android: android != null
                 ? const AndroidNotificationDetails(
-              'foreground_channel_id',
-              'Foreground Notifications',
-              importance: Importance.high,
-              priority: Priority.high,
-            )
+                    'foreground_channel_id',
+                    'Foreground Notifications',
+                    importance: Importance.high,
+                    priority: Priority.high,
+                  )
                 : null,
             iOS: const DarwinNotificationDetails(
               presentAlert: true,
