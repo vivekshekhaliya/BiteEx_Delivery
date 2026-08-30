@@ -49,6 +49,12 @@
 	<string>BiteEx Delivery requires location access to update delivery locations.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>BiteEx Delivery requires access to your location to track order deliveries and update delivery status.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>BiteEx Delivery requires camera access to take profile photos and delivery verification photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>BiteEx Delivery requires photo library access to select and upload photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>BiteEx Delivery requires microphone access when capturing video.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
