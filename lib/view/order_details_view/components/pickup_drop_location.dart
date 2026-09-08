@@ -1,16 +1,47 @@
+import 'dart:io';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/order_details_model.dart';
 import '../../../res/components/custom_text.dart';
 import '../../../res/constants/app_colors.dart';
-import '../../../view/map_view/map_screen.dart';
 
 class PickupDropLocation extends StatelessWidget {
   final Pickup? pickup;
   final Drop? drop;
   const PickupDropLocation({super.key, this.pickup, this.drop});
+
+  Future<void> _openMapLink(double lat, double lng, String addressText) async {
+    if (Platform.isIOS) {
+      // 1. Try Google Maps app on iOS first
+      final Uri googleMapsAppUri =
+          Uri.parse('comgooglemaps://?q=$lat,$lng&center=$lat,$lng');
+      if (await canLaunchUrl(googleMapsAppUri)) {
+        await launchUrl(googleMapsAppUri);
+        return;
+      }
+
+      // 2. Otherwise fallback to Apple Maps on iOS
+      final Uri appleMapsUri = Uri.parse(
+        'https://maps.apple.com/?q=${Uri.encodeComponent(addressText)}&ll=$lat,$lng',
+      );
+      if (await canLaunchUrl(appleMapsUri)) {
+        await launchUrl(appleMapsUri, mode: LaunchMode.externalApplication);
+        return;
+      }
+    }
+
+    // Android & general fallback: Google Maps
+    final Uri googleMapsWebUri =
+        Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+    if (await canLaunchUrl(googleMapsWebUri)) {
+      await launchUrl(googleMapsWebUri, mode: LaunchMode.externalApplication);
+    } else {
+      await launchUrl(googleMapsWebUri, mode: LaunchMode.platformDefault);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,15 +163,10 @@ class PickupDropLocation extends StatelessWidget {
                         }
                         lat ??= 23.050473;
                         lng ??= 72.533682;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MapScreen(
-                              latitude: lat!,
-                              longitude: lng!,
-                              address: addressText ?? "Ahmedabad University",
-                            ),
-                          ),
+                        _openMapLink(
+                          lat,
+                          lng,
+                          addressText ?? "Ahmedabad University",
                         );
                       },
                       child: CustomText(

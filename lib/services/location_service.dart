@@ -68,7 +68,8 @@ class LocationService {
       return const LocationCheckResult(
         allowed: false,
         status: LocationStatus.serviceDisabled,
-        message: 'Location services are disabled. Please enable GPS to accept orders.',
+        message:
+            'Location services are disabled. Please enable GPS to accept orders.',
       );
     }
 
@@ -89,7 +90,8 @@ class LocationService {
       return const LocationCheckResult(
         allowed: false,
         status: LocationStatus.permissionDeniedForever,
-        message: 'Location permissions are permanently denied. Please enable them in app settings.',
+        message:
+            'Location permissions are permanently denied. Please enable them in app settings.',
       );
     }
 
@@ -99,7 +101,8 @@ class LocationService {
       return const LocationCheckResult(
         allowed: false,
         status: LocationStatus.timeoutOrError,
-        message: 'Unable to retrieve your current location. Please check GPS and try again.',
+        message:
+            'Unable to retrieve your current location. Please check GPS and try again.',
       );
     }
 
@@ -116,8 +119,12 @@ class LocationService {
 
         final rawOutlet = outletData['data'];
         if (rawOutlet != null) {
-          final parsedLat = rawOutlet['latitude'] is num ? (rawOutlet['latitude'] as num).toDouble() : null;
-          final parsedLng = rawOutlet['longitude'] is num ? (rawOutlet['longitude'] as num).toDouble() : null;
+          final parsedLat = rawOutlet['latitude'] is num
+              ? (rawOutlet['latitude'] as num).toDouble()
+              : null;
+          final parsedLng = rawOutlet['longitude'] is num
+              ? (rawOutlet['longitude'] as num).toDouble()
+              : null;
           if (parsedLat != null && parsedLng != null) {
             outletLat = parsedLat;
             outletLng = parsedLng;
@@ -148,7 +155,8 @@ class LocationService {
       allowed: false,
       status: LocationStatus.outOfRange,
       distanceMeters: distance,
-      message: 'You must be within an ${radiusInMeters.toInt()}-meter radius of the outlet premises to accept orders. (Current distance: ${distance.toStringAsFixed(1)}m)',
+      message:
+          'You must be within an ${radiusInMeters.toInt()}-meter radius of the outlet premises to accept orders. (Current distance: ${distance.toStringAsFixed(1)}m)',
     );
   }
 
@@ -159,29 +167,27 @@ class LocationService {
   static Future<LocationCheckResult> isWithinServiceableArea({
     String? outOfRangeMessage,
   }) async {
-    return checkOutletRadius(
-      radiusInMeters: _maxDistanceMeters,
-    );
+    return checkOutletRadius(radiusInMeters: _maxDistanceMeters);
   }
 
   /// Haversine formula to calculate distance between two lat/lng points in
   /// meters.
   static double _calculateDistance(
-      double lat1,
-      double lon1,
-      double lat2,
-      double lon2,
-      ) {
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) {
     const double earthRadius = 6371000; // meters
     final double dLat = _degreesToRadians(lat2 - lat1);
     final double dLon = _degreesToRadians(lon2 - lon1);
 
     final double a =
         sin(dLat / 2) * sin(dLat / 2) +
-            cos(_degreesToRadians(lat1)) *
-                cos(_degreesToRadians(lat2)) *
-                sin(dLon / 2) *
-                sin(dLon / 2);
+        cos(_degreesToRadians(lat1)) *
+            cos(_degreesToRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
 
     final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return earthRadius * c;

@@ -18,7 +18,7 @@ class WebSocketManager {
   bool get isConnected => _isConnected;
 
   final StreamController<dynamic> _controller =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   Stream<dynamic> get stream => _controller.stream;
 
@@ -30,7 +30,7 @@ class WebSocketManager {
       _channel = IOWebSocketChannel.connect(url);
 
       _subscription = _channel!.stream.listen(
-            (message) {
+        (message) {
           debugPrint("📩 Message: $message");
 
           try {
@@ -112,6 +112,7 @@ class WebSocketManager {
 
       /// 👉 Auto subscribe here
       subscribe("delivery-orders");
+      subscribe("app-orders");
     }
 
     /// ✅ Subscription success
@@ -120,20 +121,29 @@ class WebSocketManager {
       debugPrint("✅ Subscribed: $channel");
     }
 
-    /// ✅ Delivery Orders event on delivery-orders channel
+    /// ✅ Delivery & App Orders event on delivery-orders / app-orders channel
     final channelName = data['channel'];
     if (channelName == 'delivery-orders' ||
+        channelName == 'app-orders' ||
         event == 'delivery-orders' ||
+        event == 'app-orders' ||
         event == 'order.created' ||
         event == 'order.updated') {
       try {
         final rawData = data['data'];
         final parsedData = rawData is String ? jsonDecode(rawData) : rawData;
-        debugPrint("📦 Delivery Orders Event Received: $event");
-        _controller.add({"type": "delivery_orders_updated", "channel": "delivery-orders", "data": parsedData});
+        debugPrint("📦 Orders Event Received ($channelName / $event)");
+        _controller.add({
+          "type": "delivery_orders_updated",
+          "channel": channelName ?? event,
+          "data": parsedData,
+        });
       } catch (e) {
-        debugPrint("❌ Error parsing delivery-orders event: $e");
-        _controller.add({"type": "delivery_orders_updated", "channel": "delivery-orders"});
+        debugPrint("❌ Error parsing order event: $e");
+        _controller.add({
+          "type": "delivery_orders_updated",
+          "channel": channelName ?? event,
+        });
       }
     }
 

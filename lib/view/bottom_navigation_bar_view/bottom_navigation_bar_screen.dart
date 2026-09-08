@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,6 +26,7 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   final NotificationService _notificationService = NotificationService();
+  final AudioPlayer _orderSoundPlayer = AudioPlayer();
   int _selectedIndex = 0;
   StreamSubscription? _socketSubscription;
 
@@ -71,7 +73,13 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   @override
   void dispose() {
     _socketSubscription?.cancel();
+    _orderSoundPlayer.dispose();
     super.dispose();
+  }
+
+  Future<void> _playOrderSound() async {
+    await _orderSoundPlayer.stop();
+    await _orderSoundPlayer.play(AssetSource('audio/order_sound_effect.mp3'));
   }
 
   /// Listen to WebSocket stream for delivery_orders_updated events
@@ -80,6 +88,13 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       if (data is Map) {
         if (data['type'] == 'delivery_orders_updated' ||
             data['channel'] == 'delivery-orders') {
+          if (mounted) {
+            unawaited(_playOrderSound());
+            final riderVM = Provider.of<RiderViewModel>(context, listen: false);
+            riderVM.getAvailableOrdersApi(context);
+            riderVM.getRiderDashboardApi(context);
+          }
+        } else if (data['channel'] == 'app-orders') {
           if (mounted) {
             final riderVM = Provider.of<RiderViewModel>(context, listen: false);
             riderVM.getAvailableOrdersApi(context);
